@@ -53,9 +53,13 @@ class MultiDatabaseManager:
     def _normalize_uri(self, uri: str) -> str:
         if not uri:
             return uri
-        clean = str(uri).strip()
+        clean = str(uri).strip().strip("'\"")
+        if clean.startswith("psql "):
+            clean = clean[5:].strip().strip("'\"")
         if clean.startswith("postgres://"):
-            clean = clean.replace("postgres://", "postgresql://", 1)
+            clean = "postgresql+psycopg2://" + clean[11:]
+        elif clean.startswith("postgresql://"):
+            clean = "postgresql+psycopg2://" + clean[13:]
         return clean
 
     def get_connection_url(self, database_id: str) -> Optional[str]:

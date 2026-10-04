@@ -113,8 +113,8 @@ FRONTEND_URL = _normalize_origin(
 # 3. Dynamic Database URI Resolution (DEV, QA, PROD)
 sqlite_dev_path = os.path.join(_backend_dir, 'dev.db').replace('\\', '/')
 
-DEFAULT_NEON_OWNER_URL = "postgresql://neondb_owner:npg_59vRFHGrYwbD@ep-square-sky-b389pjbv-pooler.c-4.ap-southeast-1.aws.neon.tech/neondb?sslmode=require"
-DEFAULT_NEON_SELLER2_URL = "postgresql://neondb_owner:npg_aSEt9ZPjp0AW@ep-morning-field-b3of4l13-pooler.c-4.ap-southeast-1.aws.neon.tech/neondb?sslmode=require"
+DEFAULT_NEON_OWNER_URL = "postgresql+psycopg2://neondb_owner:npg_59vRFHGrYwbD@ep-square-sky-b389pjbv-pooler.c-4.ap-southeast-1.aws.neon.tech/neondb?sslmode=require"
+DEFAULT_NEON_SELLER2_URL = "postgresql+psycopg2://neondb_owner:npg_aSEt9ZPjp0AW@ep-morning-field-b3of4l13-pooler.c-4.ap-southeast-1.aws.neon.tech/neondb?sslmode=require"
 
 def _clean_db_uri(uri):
     if not uri:
@@ -123,7 +123,9 @@ def _clean_db_uri(uri):
     if val.startswith("psql "):
         val = val[5:].strip().strip("'\"")
     if val.startswith("postgres://"):
-        val = "postgresql://" + val[11:]
+        val = "postgresql+psycopg2://" + val[11:]
+    elif val.startswith("postgresql://"):
+        val = "postgresql+psycopg2://" + val[13:]
     return val if val else None
 
 if ENVIRONMENT == "DEV":
