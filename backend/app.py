@@ -116,7 +116,15 @@ app.url_map.strict_slashes = False
 app.before_request(check_maintenance_mode)
 
 # Initialize extensions
-db.init_app(app)
+try:
+    db.init_app(app)
+except Exception as db_init_err:
+    print(f"\n{'='*75}")
+    print(f" [DATABASE INIT ERROR] Failed to initialize database: {db_init_err}")
+    print(f" [DATABASE URI]: {app.config.get('SQLALCHEMY_DATABASE_URI')}")
+    print(f" [ENGINE OPTIONS]: {app.config.get('SQLALCHEMY_ENGINE_OPTIONS')}")
+    print(f"{'='*75}\n")
+    raise
 migrate.init_app(app, db)
 mail.init_app(app)
 
