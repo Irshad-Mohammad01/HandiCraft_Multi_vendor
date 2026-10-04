@@ -1,0 +1,28 @@
+services:
+  - type: web
+    name: craftnest-backend
+    env: python
+    plan: free
+    buildCommand: pip install -r backend/requirements.txt
+    startCommand: gunicorn backend.app:app --bind 0.0.0.0:$PORT --workers 2 --threads 4 --timeout 120
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.3
+      - key: FLASK_ENV
+        value: production
+      - key: ENVIRONMENT
+        value: PROD
+      - key: FRONTEND_URL
+        sync: false
+      - key: PROD_DATABASE_URL
+        sync: false
+      - key: SELLER_DATABASE_URL_2
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: SECRET_KEY
+        generateValue: true
+      - key: ENABLE_PAYMENT
+        value: "true"
+      - key: LOG_LEVEL
+        value: "INFO"

@@ -1,0 +1,752 @@
+import bcrypt
+from datetime import datetime
+import pytz
+from dateutil.relativedelta import relativedelta
+from backend.extensions import db
+from backend.utils.timezone import format_iso_datetime
+from backend.utils.security import EncryptedString
+
+
+def compute_customer_status(is_blocked, orders, now=None):
+    """
+    Computes customer status based on strict business rules:
+    1. Priority 1: BLOCKED > ACTIVE/INACTIVE
+       If admin manually blocked customer -> 'Blocked'
+    2. Priority 2: Check latest qualifying purchase (non-cancelled, non-failed)
+       - If latest qualifying purchase is within last 3 months -> 'Active'
+       - If latest qualifying purchase is older than 3 months or customer has no qualifying purchase -> 'Inactive'
+    
+    Registration date and last login DO NOT influence status calculation.
+    """
+    if is_blocked:
+        return "Blocked"
+        
+    if now is None:
+        now = datetime.now(pytz.timezone('Asia/Kolkata'))
+        
+    latest_qualifying_date = None
+    
+    for o in orders:
+        st = str(getattr(o, 'order_status', '') or '').strip().lower()
+        if st in ['cancelled', 'failed', 'rejected']:
+            continue
+            
+        tx = getattr(o, 'transaction', None)
+        if tx and str(getattr(tx, 'status', '') or '').strip().lower() in ['failed', 'rejected']:
+            continue
+            
+        order_date = getattr(o, 'created_at', None)
+        if order_date:
+            if latest_qualifying_date is None or order_date > latest_qualifying_date:
+                latest_qualifying_date = order_date
+                
+    if not latest_qualifying_date:
+        return "Inactive"
+        
+    if latest_qualifying_date.tzinfo is None:
+        latest_qualifying_date = pytz.timezone('Asia/Kolkata').localize(latest_qualifying_date)
+    if now.tzinfo is None:
+        now = pytz.timezone('Asia/Kolkata').localize(now)
+        
+    three_months_ago = now - relativedelta(months=3)
+    
+    if latest_qualifying_date >= three_months_ago:
+        return "Active"
+    else:
+        return "Inactive"
+
+
+class DeliveryAddress(db.Model):
+    __tablename__ = 'delivery_addresses'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
+    full_name = db.Column(db.String(255), default="")
+    phone = db.Column(db.String(20), default="")
+    house_number = db.Column(EncryptedString(255), default="")
+    building_name = db.Column(EncryptedString(255), default="")
+    street = db.Column(EncryptedString(500), default="")
+    area = db.Column(EncryptedString(500), default="")
+    landmark = db.Column(EncryptedString(500), default="")
+    city = db.Column(EncryptedString(255), default="")
+    state = db.Column(EncryptedString(255), default="")
+    pincode = db.Column(EncryptedString(255), default="")
+    address_type = db.Column(db.String(50), default="Home")
+    alternate_mobile_number = db.Column(db.String(15), nullable=True)
+    country = db.Column(EncryptedString(255), default="India")
+
+    is_default = db.Column(db.Boolean, default=False)
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(pytz.timezone('Asia/Kolkata')))
+
+    def to_dict(self):
+        user_name = self.user.name if (hasattr(self, 'user') and self.user) else ""
+        user_phone = self.user.phone if (hasattr(self, 'user') and self.user) else ""
+        resolved_name = self.full_name or user_name
+        resolved_phone = self.phone or user_phone
+        return {
+            "id": self.id,
+            "user_id": self.user_id,
+            "full_name": resolved_name,
+            "name": resolved_name,
+            "mobile_number": resolved_phone,
+            "phone": resolved_phone,
+            "house_number": self.house_number or "",
+            "building_name": self.building_name or "",
+            "street": self.street or "",
+            "area": self.area or "",
+            "landmark": self.landmark or "",
+            "city": self.city or "",
+            "state": self.state or "",
+            "pincode": self.pincode or "",
+            "postal_code": self.pincode or "",
+            "address_type": self.address_type or "Home",
+            "is_default": bool(self.is_default),
+            "alternate_mobile_number": self.alternate_mobile_number or "",
+            "country": self.country or "India",
+            "created_at": format_iso_datetime(self.created_at) if hasattr(self, 'created_at') else None
+        }
+
+class Cart(db.Model):
+    __tablename__ = 'carts'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), unique=True, nullable=False)
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(pytz.timezone('Asia/Kolkata')))
+    
+    items = db.relationship('CartItem', backref='cart', cascade='all, delete-orphan', lazy=True)
+
+class CartItem(db.Model):
+    __tablename__ = 'cart_items'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    cart_id = db.Column(db.Integer, db.ForeignKey('carts.id', ondelete='CASCADE'), nullable=False)
+    product_id = db.Column(db.Integer, db.ForeignKey('products.id', ondelete='CASCADE'), nullable=False)
+    quantity = db.Column(db.Integer, default=1)
+    saved_for_later = db.Column(db.Boolean, default=False)
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(pytz.timezone('Asia/Kolkata')))
+
+class Wishlist(db.Model):
+    __tablename__ = 'wishlists'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
+    product_id = db.Column(db.Integer, db.ForeignKey('products.id', ondelete='CASCADE'), nullable=False)
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(pytz.timezone('Asia/Kolkata')))
+
+class UserModel(db.Model):
+    __tablename__ = 'users'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    full_name = db.Column(EncryptedString(255), nullable=False)
+    email = db.Column(EncryptedString(255), unique=True, nullable=False)
+    password_hash = db.Column(db.String(255), nullable=False)
+    phone = db.Column(EncryptedString(255), nullable=True)
+    notifications = db.Column(db.JSON, default=list) # List of notifications
+    is_blocked = db.Column(db.Boolean, default=False)
+    is_admin = db.Column(db.Boolean, default=False)
+    role = db.Column(db.String(50), default="customer")
+    email_verified = db.Column(db.Boolean, default=False)
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(pytz.timezone('Asia/Kolkata')))
+    updated_at = db.Column(db.DateTime, default=lambda: datetime.now(pytz.timezone('Asia/Kolkata')), onupdate=lambda: datetime.now(pytz.timezone('Asia/Kolkata')))
+    microsoft_id = db.Column(db.String(100), unique=True, nullable=True)
+    provider = db.Column(db.String(50), default="local")
+    provider_id = db.Column(db.String(255), unique=True, nullable=True)
+    last_login = db.Column(db.DateTime, nullable=True)
+    preferred_language = db.Column(db.String(10), default=None, nullable=True)
+    first_login = db.Column(db.Boolean, default=True, nullable=False)
+    
+    # Compatibility properties for name, password, mobile, is_verified
+    @property
+    def name(self):
+        return self.full_name
+    @name.setter
+    def name(self, value):
+        self.full_name = value
+
+    @property
+    def username(self):
+        return self.full_name or self.email
+    @username.setter
+    def username(self, value):
+        self.full_name = value
+
+    @property
+    def password(self):
+        return self.password_hash
+    @password.setter
+    def password(self, value):
+        self.password_hash = value
+
+    @property
+    def mobile(self):
+        return self.phone
+    @mobile.setter
+    def mobile(self, value):
+        self.phone = value
+
+    @property
+    def is_verified(self):
+        return self.email_verified
+    @is_verified.setter
+    def is_verified(self, value):
+        self.email_verified = value
+
+    # Relationships
+    addresses = db.relationship('DeliveryAddress', backref='user', lazy=True, cascade='all, delete-orphan')
+    cart = db.relationship('Cart', backref='user', uselist=False, cascade='all, delete-orphan')
+    wishlist_items = db.relationship('Wishlist', backref='user', cascade='all, delete-orphan')
+    reviews = db.relationship('ReviewModel', backref='user', lazy=True)
+    orders = db.relationship('OrderModel', backref='user', lazy=True)
+
+    @property
+    def address(self):
+        # Return default address if exists, otherwise first address, or None
+        if not self.addresses:
+            return None
+        default_addr = next((addr for addr in self.addresses if addr.is_default), None)
+        return default_addr or self.addresses[0]
+
+    @address.setter
+    def address(self, value):
+        if not self.addresses:
+            self.addresses = [value]
+        else:
+            for a in self.addresses:
+                a.is_default = False
+            value.is_default = True
+            self.addresses.append(value)
+
+    def calculate_status(self, now=None):
+        return compute_customer_status(self.is_blocked, self.orders, now=now)
+
+    def to_dict(self):
+        # Address
+        addr = self.address
+        addr_dict = {
+            "id": addr.id if addr else None,
+            "house_number": addr.house_number if addr else "",
+            "building_name": addr.building_name if addr else "",
+            "street": addr.street if addr else "",
+            "area": addr.area if addr else "",
+            "landmark": addr.landmark if addr else "",
+            "city": addr.city if addr else "",
+            "state": addr.state if addr else "",
+            "pincode": addr.pincode if addr else "",
+            "address_type": addr.address_type if addr else "Home",
+            "is_default": addr.is_default if addr else False,
+            "alternate_mobile_number": addr.alternate_mobile_number if addr else ""
+        }
+        
+        # Wishlist
+        wishlist_list = []
+        for item in self.wishlist_items:
+            if item.product:
+                wishlist_list.append(item.product.to_dict())
+                
+        # Determine language from request
+        from flask import request
+        lang = None
+        try:
+            if request:
+                lang = request.args.get('lang') or request.headers.get('Accept-Language')
+                if lang:
+                    lang = lang.split(',')[0].split('-')[0].strip().lower()
+        except Exception:
+            pass
+
+        # Cart
+        cart_list = []
+        cart = self.cart
+        if cart:
+            for item in cart.items:
+                if not item.saved_for_later and item.product:
+                    p = item.product
+                    p_name = p.name_hi if lang == 'hi' and p.name_hi else (p.name_en or p.name)
+                    final_price = float(p.price) * (1 - float(p.discount) / 100.0)
+                    cart_list.append({
+                        "product_id": str(p.id),
+                        "_id": str(p.id),
+                        "name": p_name,
+                        "price": float(p.price),
+                        "discount": float(p.discount),
+                        "finalPrice": float(round(final_price, 2)),
+                        "image": p.images[0] if p.images else "",
+                        "quantity": int(item.quantity),
+                        "stock": int(p.stock)
+                    })
+                    
+        # Saved for later
+        saved_list = []
+        if cart:
+            for item in cart.items:
+                if item.saved_for_later and item.product:
+                    p = item.product
+                    p_name = p.name_hi if lang == 'hi' and p.name_hi else (p.name_en or p.name)
+                    final_price = float(p.price) * (1 - float(p.discount) / 100.0)
+                    saved_list.append({
+                        "product_id": str(p.id),
+                        "_id": str(p.id),
+                        "name": p_name,
+                        "price": float(p.price),
+                        "discount": float(p.discount),
+                        "finalPrice": float(round(final_price, 2)),
+                        "image": p.images[0] if p.images else "",
+                        "quantity": int(item.quantity),
+                        "stock": int(p.stock)
+                    })
+                    
+        return {
+            "id": str(self.id),
+            "_id": str(self.id),
+            "name": self.name,
+            "email": self.email,
+            "mobile": self.mobile or "",
+            "address": addr_dict,
+            "addresses": [addr.to_dict() for addr in self.addresses] if self.addresses else [],
+            "wishlist": wishlist_list,
+            "cart": cart_list,
+            "saved_for_later": saved_list,
+            "notifications": self.notifications or [],
+            "status": self.calculate_status(),
+            "is_blocked": bool(self.is_blocked),
+            "is_admin": bool(self.is_admin),
+            "is_verified": bool(self.is_verified),
+            "created_at": format_iso_datetime(self.created_at),
+            "last_login": format_iso_datetime(self.last_login),
+            "microsoft_id": self.microsoft_id,
+            "provider": self.provider or "local",
+            "provider_id": self.provider_id,
+            "preferred_language": self.preferred_language,
+            "first_login": bool(self.first_login),
+            "role": self.role if (hasattr(self, 'role') and self.role) else ("owner" if self.is_admin else "customer")
+        }
+
+    @staticmethod
+    def create_user(name, email, password, mobile, address=None, is_admin=False, role=None):
+        import os
+        # Check if user already exists
+        if UserModel.query.filter_by(email=email).first():
+            return None
+            
+        # Check if password is already hashed (starts with bcrypt prefix)
+        if password.startswith('$2b$') or password.startswith('$2a$'):
+            hashed_password = password
+        else:
+            hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+        
+        # Check if user should be marked as verified
+        is_verified_status = False
+        otp_mode = os.getenv("OTP_MODE", "development").lower()
+        if otp_mode == "development":
+            is_verified_status = True
+        else:
+            from backend.models.otp_verification import OTPVerification
+            record = OTPVerification.query.filter(
+                (OTPVerification.email == email)
+            ).filter_by(is_verified=True).first()
+            if record:
+                is_verified_status = True
+                
+        user_role = role or ("owner" if is_admin else "customer")
+        user = UserModel(
+            full_name=name,
+            email=email,
+            password_hash=hashed_password,
+            phone=mobile,
+            is_blocked=False,
+            is_admin=is_admin,
+            role=user_role,
+            email_verified=is_verified_status
+        )
+        db.session.add(user)
+        db.session.commit()
+        
+        # Add Address only if valid address data provided
+        if address and any(str(address.get(k) or "").strip() for k in ("street", "address", "city", "pincode", "house_number")):
+            addr = DeliveryAddress(user_id=user.id, is_default=True)
+            addr.full_name = address.get("full_name") or address.get("name") or user.name or ""
+            addr.phone = address.get("phone") or address.get("mobile_number") or user.phone or ""
+            addr.house_number = address.get("house_number", "")
+            addr.building_name = address.get("building_name", "")
+            addr.street = address.get("street", "") or address.get("address", "")
+            addr.area = address.get("area", "")
+            addr.landmark = address.get("landmark", "")
+            addr.city = address.get("city", "")
+            addr.state = address.get("state", "")
+            addr.pincode = address.get("pincode", "") or address.get("postal_code", "")
+            addr.address_type = address.get("address_type", "Home")
+            db.session.add(addr)
+        
+        # Initialize empty Cart
+        cart = Cart(user_id=user.id)
+        db.session.add(cart)
+        
+        db.session.commit()
+        return user.to_dict()
+
+    @staticmethod
+    def find_by_email(email):
+        from sqlalchemy.orm import selectinload, joinedload
+        user = UserModel.query.options(
+            selectinload(UserModel.addresses),
+            selectinload(UserModel.wishlist_items).joinedload(Wishlist.product),
+            selectinload(UserModel.cart).selectinload(Cart.items).joinedload(CartItem.product)
+        ).filter_by(email=email).first()
+        return user.to_dict() if user else None
+
+    @staticmethod
+    def find_by_id(user_id):
+        try:
+            uid = int(user_id)
+            from sqlalchemy.orm import selectinload, joinedload
+            user = UserModel.query.options(
+                selectinload(UserModel.addresses),
+                selectinload(UserModel.wishlist_items).joinedload(Wishlist.product),
+                selectinload(UserModel.cart).selectinload(Cart.items).joinedload(CartItem.product)
+            ).get(uid)
+            return user.to_dict() if user else None
+        except Exception:
+            return None
+
+    @staticmethod
+    def verify_password(stored_password, provided_password):
+        return bcrypt.checkpw(provided_password.encode('utf-8'), stored_password.encode('utf-8'))
+
+    @staticmethod
+    def update_cart(user_id, cart_items, commit=True):
+        try:
+            uid = int(user_id)
+            user = UserModel.query.with_for_update().get(uid)
+            if not user:
+                return False
+            
+            cart = user.cart
+            if not cart:
+                cart = Cart(user_id=uid)
+                db.session.add(cart)
+                db.session.flush()
+                
+            CartItem.query.filter_by(cart_id=cart.id, saved_for_later=False).delete()
+            from backend.models.product import ProductModel
+            
+            for item in cart_items:
+                p_raw = item.get("product_id") or item.get("id")
+                qty = int(item.get("quantity", 1))
+                prod_id = None
+                if p_raw:
+                    if str(p_raw).isdigit():
+                        prod_id = int(p_raw)
+                    elif str(p_raw).startswith("owner_"):
+                        try:
+                            prod_id = int(str(p_raw).split("_")[1])
+                        except Exception:
+                            pass
+                if prod_id and ProductModel.query.get(prod_id):
+                    cart_item = CartItem(cart_id=cart.id, product_id=prod_id, quantity=qty, saved_for_later=False)
+                    db.session.add(cart_item)
+                
+            if commit:
+                db.session.commit()
+            else:
+                db.session.flush()
+            return True
+        except Exception as e:
+            print("Error updating cart:", e)
+            if commit:
+                db.session.rollback()
+                return False
+            raise e
+
+    @staticmethod
+    def update_wishlist(user_id, wishlist_items, commit=True):
+        try:
+            uid = int(user_id)
+            user = UserModel.query.with_for_update().get(uid)
+            if not user:
+                return False
+            
+            Wishlist.query.filter_by(user_id=uid).delete()
+            from backend.models.product import ProductModel
+            
+            for item in wishlist_items:
+                prod_id_str = item.get("product_id") or item.get("_id") or item.get("id")
+                prod_id = None
+                if prod_id_str:
+                    if str(prod_id_str).isdigit():
+                        prod_id = int(prod_id_str)
+                    elif str(prod_id_str).startswith("owner_"):
+                        try:
+                            prod_id = int(str(prod_id_str).split("_")[1])
+                        except Exception:
+                            pass
+                if prod_id and ProductModel.query.get(prod_id):
+                    wish = Wishlist(user_id=uid, product_id=prod_id)
+                    db.session.add(wish)
+                    
+            if commit:
+                db.session.commit()
+            else:
+                db.session.flush()
+            return True
+        except Exception as e:
+            print("Error updating wishlist:", e)
+            if commit:
+                db.session.rollback()
+                return False
+            raise e
+
+    @staticmethod
+    def update_saved_for_later(user_id, saved_items, commit=True):
+        try:
+            uid = int(user_id)
+            user = UserModel.query.with_for_update().get(uid)
+            if not user:
+                return False
+            
+            cart = user.cart
+            if not cart:
+                cart = Cart(user_id=uid)
+                db.session.add(cart)
+                db.session.flush()
+                
+            CartItem.query.filter_by(cart_id=cart.id, saved_for_later=True).delete()
+            from backend.models.product import ProductModel
+            
+            for item in saved_items:
+                p_raw = item.get("product_id") or item.get("id")
+                qty = int(item.get("quantity", 1))
+                prod_id = None
+                if p_raw:
+                    if str(p_raw).isdigit():
+                        prod_id = int(p_raw)
+                    elif str(p_raw).startswith("owner_"):
+                        try:
+                            prod_id = int(str(p_raw).split("_")[1])
+                        except Exception:
+                            pass
+                if prod_id and ProductModel.query.get(prod_id):
+                    cart_item = CartItem(cart_id=cart.id, product_id=prod_id, quantity=qty, saved_for_later=True)
+                    db.session.add(cart_item)
+                
+            if commit:
+                db.session.commit()
+            else:
+                db.session.flush()
+            return True
+        except Exception as e:
+            print("Error updating saved for later:", e)
+            if commit:
+                db.session.rollback()
+                return False
+            raise e
+
+    @staticmethod
+    def toggle_block_user(user_id, is_blocked):
+        try:
+            uid = int(user_id)
+            user = UserModel.query.with_for_update().get(uid)
+            if user:
+                user.is_blocked = bool(is_blocked)
+                db.session.commit()
+                return True
+            return False
+        except Exception:
+            db.session.rollback()
+            return False
+
+    @staticmethod
+    def update_profile(user_id, name, email, mobile, address):
+        try:
+            uid = int(user_id)
+            user = UserModel.query.with_for_update().get(uid)
+            if not user:
+                return False
+            
+            user.name = name
+            user.email = email
+            user.mobile = mobile
+            
+            addr = user.address
+            if not addr:
+                addr = DeliveryAddress(user_id=uid, is_default=True)
+                db.session.add(addr)
+            
+            if address:
+                addr.house_number = address.get("house_number", "")
+                addr.building_name = address.get("building_name", "")
+                addr.street = address.get("street", "") or address.get("address", "")
+                addr.area = address.get("area", "")
+                addr.landmark = address.get("landmark", "")
+                addr.city = address.get("city", "")
+                addr.state = address.get("state", "")
+                addr.pincode = address.get("pincode", "")
+                addr.address_type = address.get("address_type", "Home")
+                addr.alternate_mobile_number = address.get("alternate_mobile_number") if address.get("alternate_mobile_number") else None
+                
+            db.session.commit()
+            return True
+        except Exception as e:
+            print("Error updating profile:", e)
+            db.session.rollback()
+            return False
+
+    @staticmethod
+    def update_password(user_id, new_password):
+        try:
+            uid = int(user_id)
+            user = UserModel.query.with_for_update().get(uid)
+            if user:
+                hashed_password = bcrypt.hashpw(new_password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+                user.password = hashed_password
+                db.session.commit()
+                return True
+            return False
+        except Exception:
+            db.session.rollback()
+            return False
+
+    @staticmethod
+    def find_all(page=None, limit=None):
+        try:
+            from sqlalchemy.orm import selectinload
+            query = UserModel.query.options(
+                selectinload(UserModel.addresses),
+                selectinload(UserModel.orders)
+            ).order_by(UserModel.id.desc())
+
+            def serialize_user(u):
+                addr = u.address
+                addr_dict = {
+                    "id": addr.id if addr else None,
+                    "house_number": addr.house_number if addr else "",
+                    "building_name": addr.building_name if addr else "",
+                    "street": addr.street if addr else "",
+                    "area": addr.area if addr else "",
+                    "landmark": addr.landmark if addr else "",
+                    "city": addr.city if addr else "",
+                    "state": addr.state if addr else "",
+                    "pincode": addr.pincode if addr else "",
+                    "address_type": addr.address_type if addr else "Home",
+                    "is_default": addr.is_default if addr else False,
+                    "alternate_mobile_number": addr.alternate_mobile_number if addr else ""
+                }
+                return {
+                    "id": str(u.id),
+                    "_id": str(u.id),
+                    "name": u.name,
+                    "email": u.email,
+                    "mobile": u.mobile or "",
+                    "address": addr_dict,
+                    "status": u.calculate_status(),
+                    "is_blocked": bool(u.is_blocked),
+                    "is_admin": bool(u.is_admin),
+                    "is_verified": bool(u.is_verified),
+                    "created_at": format_iso_datetime(u.created_at),
+                    "last_login": format_iso_datetime(u.last_login),
+                    "microsoft_id": u.microsoft_id,
+                    "provider": u.provider or "local",
+                    "provider_id": u.provider_id,
+                    "preferred_language": u.preferred_language,
+                    "first_login": bool(u.first_login),
+                    "role": u.role if (hasattr(u, 'role') and u.role) else ("owner" if u.is_admin else "customer")
+                }
+
+            if page is not None or limit is not None:
+                from backend.utils.pagination import paginate_query
+                return paginate_query(query, page=page, limit=limit, serializer=serialize_user)
+
+            users = query.all()
+            return [serialize_user(u) for u in users]
+        except Exception as e:
+            print("Error in find_all:", e)
+            return []
+
+    @staticmethod
+    def delete_user(user_id):
+        try:
+            uid = int(user_id)
+            user = UserModel.query.with_for_update().get(uid)
+            if user:
+                db.session.delete(user)
+                db.session.commit()
+                return True
+            return False
+        except Exception:
+            db.session.rollback()
+            return False
+
+    @staticmethod
+    def anonymize_user(user_id):
+        import uuid
+        try:
+            uid = int(user_id)
+            user = UserModel.query.with_for_update().get(uid)
+            if not user:
+                return False, "User not found"
+
+            old_email = user.email
+            anonymized_email = f"deleted_{uid}_{uuid.uuid4().hex[:8]}@deleted.local"
+
+            # 1. Anonymize user personal data and disable login
+            user.full_name = "Deleted User"
+            user.email = anonymized_email
+            user.phone = None
+            user.password_hash = f"$2b$12$DELETEDACCOUNTNOLOGIN_{uuid.uuid4().hex}"
+            user.is_blocked = True
+            user.email_verified = False
+            user.microsoft_id = None
+            user.provider = "deleted"
+            user.provider_id = None
+            user.notifications = []
+
+            # 2. Delete user personal delivery addresses
+            DeliveryAddress.query.filter_by(user_id=uid).delete(synchronize_session=False)
+
+            # 3. Delete wishlist items
+            Wishlist.query.filter_by(user_id=uid).delete(synchronize_session=False)
+
+            # 4. Clear active cart and items
+            if user.cart:
+                CartItem.query.filter_by(cart_id=user.cart.id).delete(synchronize_session=False)
+                db.session.delete(user.cart)
+            Cart.query.filter_by(user_id=uid).delete(synchronize_session=False)
+
+            db.session.commit()
+
+            # 5. Log audit action
+            try:
+                from backend.utils.audit import log_admin_action
+                log_admin_action(
+                    action_type="Account Deletion",
+                    module="User Profile",
+                    details=f"User account ID {uid} ({old_email}) was permanently deleted and anonymized upon user request."
+                )
+            except Exception:
+                pass
+
+            return True, "Account deleted successfully"
+        except Exception as e:
+            db.session.rollback()
+            print("Error in anonymize_user:", e)
+            return False, str(e)
+
+
+class UserStatusAuditLog(db.Model):
+    __tablename__ = 'user_status_audit_logs'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
+    admin_id = db.Column(db.String(100), nullable=False)
+    status_changed_to = db.Column(db.String(50), nullable=False)
+    reason = db.Column(db.Text, nullable=False)
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(pytz.timezone('Asia/Kolkata')))
+    
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "user_id": self.user_id,
+            "admin_id": self.admin_id,
+            "status_changed_to": self.status_changed_to,
+            "reason": self.reason,
+            "created_at": format_iso_datetime(self.created_at)
+        }

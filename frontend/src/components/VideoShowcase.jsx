@@ -1,0 +1,89 @@
+import React, { useEffect, useRef, useState } from 'react';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { SERVER_BASE_URL } from '../context/AuthContext';
+
+gsap.registerPlugin(ScrollTrigger);
+
+export const VideoShowcase = React.memo(({ url }) => {
+  const sectionRef = useRef(null);
+  const videoWrapperRef = useRef(null);
+  const videoRef = useRef(null);
+  const [isVisible, setIsVisible] = useState(false);
+  const videoUrl = url?.startsWith('/static/') ? `${SERVER_BASE_URL}${url}` : (url || "/golden-stage.mp4");
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          if (videoRef.current) {
+            videoRef.current.play().catch(() => {});
+          }
+        } else {
+          if (videoRef.current) {
+            videoRef.current.pause();
+          }
+        }
+      },
+      { threshold: 0.15 }
+    );
+
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        videoWrapperRef.current,
+        { opacity: 0, scale: 0.98 },
+        {
+          opacity: 1,
+          scale: 1,
+          duration: 1,
+          ease: 'power2.out',
+          scrollTrigger: {
+            trigger: videoWrapperRef.current,
+            start: 'top 85%',
+            once: true,
+          },
+        }
+      );
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, []);
+
+  return (
+    <section
+      ref={sectionRef}
+      className="relative w-full overflow-hidden bg-transparent py-0"
+    >
+      {/* Edge-to-Edge Video Player Container */}
+      <div
+        ref={videoWrapperRef}
+        className="relative w-full aspect-video bg-black shadow-2xl overflow-hidden"
+      >
+        {/* Top and Bottom Gold Borders to Blend with the Luxury Theme */}
+        <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#D4A75F]/60 to-transparent z-10" />
+        <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#D4A75F]/60 to-transparent z-10" />
+
+        {/* Optimized Video element — preload metadata, scroll-activated lazy play */}
+        <video
+          ref={videoRef}
+          className="absolute inset-0 w-full h-full object-cover"
+          src={videoUrl}
+          preload="metadata"
+          autoPlay={false}
+          loop
+          muted
+          playsInline
+        />
+      </div>
+    </section>
+  );
+});

@@ -1,0 +1,193 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary-terracotta: #A63D40;
+  --color-deep-terracotta: #8F3034;
+  --color-warm-cream: #FFF9F3;
+  --color-soft-beige: #F4E8DC;
+  --color-white: #FFFFFF;
+  --color-heritage-gold: #C69A5B;
+  --color-primary-text: #2B2523;
+  --color-secondary-text: #6F625D;
+  --color-border: #E6D8CC;
+  --color-success: #3F7D5A;
+  --color-error: #B84242;
+  --color-warning: #B77935;
+
+  --font-serif: 'Playfair Display', Georgia, serif;
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+:root {
+  --primary-terracotta: #A63D40;
+  --deep-terracotta: #8F3034;
+  --warm-cream: #FFF9F3;
+  --soft-beige: #F4E8DC;
+  --white: #FFFFFF;
+  --heritage-gold: #C69A5B;
+  --primary-text: #2B2523;
+  --secondary-text: #6F625D;
+  --border-color: #E6D8CC;
+  --border: #E6D8CC;
+  --success: #3F7D5A;
+  --error: #B84242;
+  --warning: #B77935;
+
+  /* Aliases for inline styles compatibility */
+  --color-primary-terracotta: #A63D40;
+  --color-deep-terracotta: #8F3034;
+  --color-warm-cream: #FFF9F3;
+  --color-soft-beige: #F4E8DC;
+  --color-white: #FFFFFF;
+  --color-heritage-gold: #C69A5B;
+  --color-text-primary: #2B2523;
+  --color-text-secondary: #6F625D;
+  --color-border: #E6D8CC;
+  --color-success: #3F7D5A;
+  --color-error: #B84242;
+  --color-warning: #B77935;
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-full: 9999px;
+  --shadow-sm: 0 1px 3px 0 rgba(43, 37, 35, 0.08);
+  --shadow-md: 0 4px 12px -1px rgba(43, 37, 35, 0.08);
+  --shadow-lg: 0 10px 25px -3px rgba(43, 37, 35, 0.1);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  margin: 0;
+  padding: 0;
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #FFF9F3;
+  color: #2B2523;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: clip;
+}
+
+h1, h2, h3, h4, .font-serif, .editorial-heading {
+  font-family: 'Playfair Display', Georgia, serif;
+}
+
+/* ==========================================================
+   2. CRAFT CONTAINER: RESPONSIVE DESKTOP WIDE LAYOUT
+   min(100% - 32px, 1480px) on mobile/tablet
+   min(100% - 48px, 1480px) on 1440px (1360px+ usable)
+   min(100% - 64px, 1540px) on 1600px+
+   ========================================================== */
+.craft-container {
+  width: 100%;
+  max-width: 1520px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 16px;
+  padding-right: 16px;
+}
+
+@media (min-width: 640px) {
+  .craft-container {
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .craft-container {
+    padding-left: 32px;
+    padding-right: 32px;
+  }
+}
+
+@media (min-width: 1440px) {
+  .craft-container {
+    padding-left: 40px;
+    padding-right: 40px;
+  }
+}
+
+/* Support legacy .container class */
+.container {
+  width: 100%;
+  max-width: 1520px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 16px;
+  padding-right: 16px;
+}
+
+@media (min-width: 640px) {
+  .container {
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container {
+    padding-left: 32px;
+    padding-right: 32px;
+  }
+}
+
+/* Custom Scrollbar in Warm Terracotta Palette */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #FFF9F3;
+}
+::-webkit-scrollbar-thumb {
+  background: #E6D8CC;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #A63D40;
+}
+
+/* CraftNest Shadows */
+.craft-card-shadow {
+  box-shadow: 0 2px 12px -2px rgba(43, 37, 35, 0.06);
+}
+.craft-card-shadow-hover {
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.craft-card-shadow-hover:hover {
+  box-shadow: 0 8px 24px -4px rgba(166, 61, 64, 0.12);
+  transform: translateY(-2px);
+}
+
+/* Focus Outline Style */
+*:focus-visible {
+  outline: 2px solid #A63D40;
+  outline-offset: 2px;
+}
+
+/* Image containment rules to never stretch */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Mobile Sticky Action Safe Area Padding */
+.safe-bottom-padding {
+  padding-bottom: calc(76px + env(safe-area-inset-bottom, 16px));
+}
+
+@media (min-width: 769px) {
+  .safe-bottom-padding {
+    padding-bottom: 0;
+  }
+}
