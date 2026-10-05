@@ -85,7 +85,7 @@ export const ProductCard = ({ product, isOwnerView = false }) => {
       }`}
     >
       {/* 1. PRODUCT IMAGE CONTAINER: Clean neutral background, consistent square aspect ratio & object-contain */}
-      <div className="relative aspect-square w-full bg-[#FAF7F2] p-3 sm:p-4 flex items-center justify-center overflow-hidden border-b border-[#F0E6DC]/70">
+      <div className="relative aspect-square w-full bg-[#FAF7F2] p-2.5 sm:p-4 flex items-center justify-center overflow-hidden border-b border-[#F0E6DC]/70">
         {!imgError ? (
           <img
             src={displayImage}
@@ -95,25 +95,25 @@ export const ProductCard = ({ product, isOwnerView = false }) => {
             className="w-full h-full object-contain object-center transition-transform duration-500 ease-out group-hover:scale-105"
           />
         ) : (
-          <div className="flex flex-col items-center justify-center text-center p-4 text-[#8C7E77] w-full h-full select-none">
-            <div className="w-10 h-10 rounded-full bg-[#FFF9F3] border border-[#E6D8CC] flex items-center justify-center mb-1.5 shadow-2xs">
-              <Sparkles className="w-4 h-4 text-[#C69A5B]" />
+          <div className="flex flex-col items-center justify-center text-center p-2 sm:p-4 text-[#8C7E77] w-full h-full select-none">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-[#FFF9F3] border border-[#E6D8CC] flex items-center justify-center mb-1 shadow-2xs">
+              <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#C69A5B]" />
             </div>
-            <span className="font-serif text-[11px] font-semibold text-[#2B2523] tracking-wide">CraftNest Atelier</span>
-            <span className="text-[9px] text-[#A63D40] uppercase tracking-wider mt-0.5 font-medium">Heritage Handicraft</span>
+            <span className="font-serif text-[10px] sm:text-[11px] font-semibold text-[#2B2523] tracking-wide">CraftNest Atelier</span>
+            <span className="text-[8px] sm:text-[9px] text-[#A63D40] uppercase tracking-wider font-medium">Heritage</span>
           </div>
         )}
 
         {/* Discount Badge */}
         {discount > 0 && inStock && (
-          <span className="absolute top-2.5 left-2.5 bg-[#A63D40] text-white text-[10px] font-bold tracking-wider px-2 py-0.5 rounded-full uppercase shadow-xs">
+          <span className="absolute top-2 left-2 sm:top-2.5 sm:left-2.5 bg-[#A63D40] text-white text-[9px] sm:text-[10px] font-bold tracking-wider px-1.5 sm:px-2 py-0.5 rounded-full uppercase shadow-xs">
             {discount}% OFF
           </span>
         )}
 
         {/* Sold Out / Stock Status Badge */}
         {!inStock && (
-          <span className="absolute top-2.5 left-2.5 bg-[#6F625D] text-white text-[10px] font-semibold px-2 py-0.5 rounded-full uppercase shadow-xs">
+          <span className="absolute top-2 left-2 sm:top-2.5 sm:left-2.5 bg-[#6F625D] text-white text-[9px] sm:text-[10px] font-semibold px-1.5 sm:px-2 py-0.5 rounded-full uppercase shadow-xs">
             Sold Out
           </span>
         )}
@@ -124,60 +124,60 @@ export const ProductCard = ({ product, isOwnerView = false }) => {
             type="button"
             onClick={handleWishlistClick}
             aria-label={inWishlist ? 'Remove from wishlist' : 'Add to wishlist'}
-            className={`absolute top-2.5 right-2.5 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 shadow-xs cursor-pointer ${
+            className={`absolute top-2 right-2 sm:top-2.5 sm:right-2.5 w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center transition-all duration-200 shadow-xs cursor-pointer ${
               inWishlist
                 ? 'bg-white text-[#A63D40] ring-1 ring-[#A63D40]/40'
                 : 'bg-white/90 text-[#6F625D] hover:bg-white hover:text-[#A63D40]'
             }`}
           >
-            <Heart className={`w-3.5 h-3.5 ${inWishlist ? 'fill-[#A63D40]' : ''}`} />
+            <Heart className={`w-3 h-3 sm:w-3.5 sm:h-3.5 ${inWishlist ? 'fill-[#A63D40]' : ''}`} />
           </button>
         )}
       </div>
 
       {/* CARD BODY: STRICT PRODUCT INFORMATION HIERARCHY */}
-      <div className="flex flex-col flex-grow p-3.5 sm:p-4">
+      <div className="flex flex-col flex-grow p-2.5 sm:p-4">
         {/* 2. Category name in small, elegant uppercase text */}
-        <span className="text-[10px] sm:text-[11px] font-bold tracking-widest uppercase text-[#C69A5B] truncate mb-1">
+        <span className="text-[9px] sm:text-[11px] font-bold tracking-widest uppercase text-[#C69A5B] truncate mb-0.5 sm:mb-1">
           {categoryName}
         </span>
 
         {/* 3. Product name with clear readable typography */}
-        <h3 className="font-serif text-sm sm:text-[15px] font-semibold text-[#2B2523] line-clamp-1 leading-snug group-hover:text-[#A63D40] transition-colors mb-1.5">
+        <h3 className="font-serif text-xs sm:text-[15px] font-semibold text-[#2B2523] line-clamp-1 leading-snug group-hover:text-[#A63D40] transition-colors mb-1 sm:mb-1.5">
           {product.name}
         </h3>
 
         {/* 4. Rating and review count */}
-        <div className="flex items-center gap-1.5 mb-2 text-xs">
+        <div className="flex items-center gap-1 sm:gap-1.5 mb-1.5 sm:mb-2 text-[11px] sm:text-xs">
           <div className="flex items-center text-amber-500">
-            <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+            <Star className="w-3 h-3 sm:w-3.5 sm:h-3.5 fill-amber-400 text-amber-400" />
           </div>
-          <span className="font-semibold text-[#2B2523] text-xs">{ratingValue}</span>
-          <span className="text-[#8C7E77] text-[11px]">
-            ({reviewsCount > 0 ? `${reviewsCount} reviews` : 'Artisan Certified'})
+          <span className="font-semibold text-[#2B2523] text-[11px] sm:text-xs">{ratingValue}</span>
+          <span className="text-[#8C7E77] text-[10px] sm:text-[11px] truncate">
+            ({reviewsCount > 0 ? `${reviewsCount}` : 'Artisan'})
           </span>
         </div>
 
-        {/* 5. Short description, limited to a few lines */}
-        <p className="text-xs text-[#6F625D] leading-relaxed line-clamp-2 mb-3 min-h-[2rem]">
+        {/* 5. Short description, limited to a few lines on desktop, hidden on compact mobile to maintain equal heights */}
+        <p className="hidden sm:line-clamp-2 text-xs text-[#6F625D] leading-relaxed mb-3 min-h-[2rem]">
           {shortDescription}
         </p>
 
         {/* 6. Selling price prominently & 7. Original price with strikethrough & discount */}
-        <div className="mt-auto pt-3 border-t border-[#F0E6DC] flex items-center justify-between gap-2">
-          <div className="flex flex-col">
-            <div className="flex items-baseline gap-1.5 flex-wrap">
-              <span className="font-serif text-base sm:text-lg font-bold text-[#2B2523]">
+        <div className="mt-auto pt-2 sm:pt-3 border-t border-[#F0E6DC] flex items-center justify-between gap-1.5 sm:gap-2">
+          <div className="flex flex-col min-w-0">
+            <div className="flex items-baseline gap-1 sm:gap-1.5 flex-wrap">
+              <span className="font-serif text-sm sm:text-lg font-bold text-[#2B2523]">
                 ₹{effectivePrice.toLocaleString('en-IN')}
               </span>
               {discount > 0 && (
-                <span className="text-xs text-[#8C7E77] line-through">
+                <span className="text-[10px] sm:text-xs text-[#8C7E77] line-through">
                   ₹{price.toLocaleString('en-IN')}
                 </span>
               )}
             </div>
             {discount > 0 && (
-              <span className="text-[10px] font-semibold text-emerald-700 tracking-wide">
+              <span className="text-[9px] sm:text-[10px] font-semibold text-emerald-700 tracking-wide truncate">
                 Save {discount}%
               </span>
             )}
@@ -190,7 +190,7 @@ export const ProductCard = ({ product, isOwnerView = false }) => {
               disabled={!inStock || adding}
               onClick={handleAddToCart}
               aria-label="Add to Cart"
-              className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-[#FFF9F3] text-[#2B2523] border border-[#E6D8CC] hover:bg-[#A63D40] hover:text-white hover:border-[#A63D40] text-xs font-semibold shadow-2xs transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed shrink-0"
+              className="inline-flex items-center justify-center gap-1 sm:gap-1.5 p-1.5 sm:px-3 sm:py-1.5 rounded-lg sm:rounded-xl bg-[#FFF9F3] text-[#2B2523] border border-[#E6D8CC] hover:bg-[#A63D40] hover:text-white hover:border-[#A63D40] text-xs font-semibold shadow-2xs transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed shrink-0"
             >
               <ShoppingBag className="w-3.5 h-3.5" />
               <span className="hidden sm:inline">{adding ? 'Added' : 'Add'}</span>

@@ -196,50 +196,52 @@ export default function Cart() {
               const itemId = String(item.id || item._id);
 
               return (
-                <div key={itemId} className="p-4 sm:p-6 flex flex-col sm:flex-row gap-4 sm:gap-6 items-start sm:items-center">
-                  {/* Thumbnail */}
-                  <Link
-                    to={`/products/${itemId}`}
-                    className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden bg-[#FFF9F3] border border-[#E6D8CC] shrink-0 p-1 group"
-                  >
-                    <img
-                      src={imgUrl}
-                      alt={item.name}
-                      className="w-full h-full object-cover rounded-xl group-hover:scale-105 transition-transform"
-                      onError={(e) => {
-                        e.target.src = 'https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?auto=format&fit=crop&w=400&q=80';
-                      }}
-                    />
-                  </Link>
-
-                  {/* Details */}
-                  <div className="flex-1 min-w-0 space-y-1">
-                    {item.category && (
-                      <span className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-wider text-[#C69A5B] block">
-                        {typeof item.category === 'string' ? item.category : item.category.name}
-                      </span>
-                    )}
+                <div key={itemId} className="p-3.5 sm:p-6 flex flex-col sm:flex-row gap-3 sm:gap-6 items-stretch sm:items-center">
+                  <div className="flex gap-3 items-center min-w-0 flex-1">
+                    {/* Thumbnail */}
                     <Link
                       to={`/products/${itemId}`}
-                      className="font-serif text-sm sm:text-base font-bold text-[#2B2523] hover:text-[#A63D40] transition-colors line-clamp-1 block"
+                      className="w-16 h-16 sm:w-24 sm:h-24 rounded-xl sm:rounded-2xl overflow-hidden bg-[#FFF9F3] border border-[#E6D8CC] shrink-0 p-1 group"
                     >
-                      {item.name}
+                      <img
+                        src={imgUrl}
+                        alt={item.name}
+                        className="w-full h-full object-cover rounded-lg sm:rounded-xl group-hover:scale-105 transition-transform"
+                        onError={(e) => {
+                          e.target.src = 'https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?auto=format&fit=crop&w=400&q=80';
+                        }}
+                      />
                     </Link>
-                    <div className="flex items-baseline gap-2">
-                      <span className="text-sm sm:text-base font-bold text-[#A63D40]">
-                        ₹{effectivePrice.toLocaleString('en-IN')}
-                      </span>
-                      {itemDiscount > 0 && (
-                        <span className="text-xs text-[#6F625D] line-through">
-                          ₹{itemPrice.toLocaleString('en-IN')}
+
+                    {/* Details */}
+                    <div className="flex-1 min-w-0 space-y-0.5 sm:space-y-1">
+                      {item.category && (
+                        <span className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-wider text-[#C69A5B] block truncate">
+                          {typeof item.category === 'string' ? item.category : item.category.name}
                         </span>
                       )}
+                      <Link
+                        to={`/products/${itemId}`}
+                        className="font-serif text-xs sm:text-base font-bold text-[#2B2523] hover:text-[#A63D40] transition-colors line-clamp-1 block"
+                      >
+                        {item.name}
+                      </Link>
+                      <div className="flex items-baseline gap-1.5 sm:gap-2">
+                        <span className="text-xs sm:text-base font-bold text-[#A63D40]">
+                          ₹{effectivePrice.toLocaleString('en-IN')}
+                        </span>
+                        {itemDiscount > 0 && (
+                          <span className="text-[10px] sm:text-xs text-[#6F625D] line-through">
+                            ₹{itemPrice.toLocaleString('en-IN')}
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </div>
 
                   {/* Quantity & Line Total */}
-                  <div className="flex items-center justify-between w-full sm:w-auto gap-4 pt-2 sm:pt-0">
-                    <div className="inline-flex items-center border border-[#E6D8CC] rounded-xl bg-[#FFF9F3] p-1">
+                  <div className="flex items-center justify-between w-full sm:w-auto gap-2 sm:gap-4 pt-2 sm:pt-0 border-t border-[#F0E6DC] sm:border-0">
+                    <div className="inline-flex items-center border border-[#E6D8CC] rounded-xl bg-[#FFF9F3] p-0.5 sm:p-1">
                       <button
                         type="button"
                         onClick={() => updateQuantity(itemId, Math.max(1, item.quantity - 1))}
@@ -247,9 +249,9 @@ export default function Cart() {
                         className="p-1 rounded-lg text-[#2B2523] hover:bg-white disabled:opacity-40 cursor-pointer"
                         aria-label="Decrease quantity"
                       >
-                        <Minus className="w-3.5 h-3.5" />
+                        <Minus className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                       </button>
-                      <span className="w-8 text-center text-xs font-bold text-[#2B2523]">
+                      <span className="w-6 sm:w-8 text-center text-xs font-bold text-[#2B2523]">
                         {item.quantity}
                       </span>
                       <button
@@ -258,12 +260,12 @@ export default function Cart() {
                         className="p-1 rounded-lg text-[#2B2523] hover:bg-white cursor-pointer"
                         aria-label="Increase quantity"
                       >
-                        <Plus className="w-3.5 h-3.5" />
+                        <Plus className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                       </button>
                     </div>
 
                     <div className="text-right sm:w-28">
-                      <span className="font-serif text-sm sm:text-base font-bold text-[#2B2523] block">
+                      <span className="font-serif text-xs sm:text-base font-bold text-[#2B2523] block">
                         ₹{lineTotal.toLocaleString('en-IN')}
                       </span>
                     </div>
@@ -272,9 +274,9 @@ export default function Cart() {
                       type="button"
                       onClick={() => removeFromCart(itemId)}
                       aria-label="Remove item"
-                      className="p-2 text-[#6F625D] hover:text-[#B84242] hover:bg-rose-50 rounded-xl transition-colors cursor-pointer"
+                      className="p-1.5 sm:p-2 text-[#6F625D] hover:text-[#B84242] hover:bg-rose-50 rounded-xl transition-colors cursor-pointer"
                     >
-                      <Trash2 className="w-4 h-4" />
+                      <Trash2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                     </button>
                   </div>
                 </div>

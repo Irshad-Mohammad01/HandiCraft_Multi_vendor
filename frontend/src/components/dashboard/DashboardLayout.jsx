@@ -283,15 +283,15 @@ export const DashboardLayout = ({ title, subtitle, children, role: propRole, act
         </div>
 
         {/* Top Header - Fixed/Sticky at top of content */}
-        <header className="shrink-0 bg-white border-b border-[#E6D8CC] px-6 py-5 z-20">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 min-h-[32px]">
-            <div>
-              {title && <h1 className="font-serif text-2xl font-bold text-[#2B2523]">{title}</h1>}
-              {subtitle && <p className="text-xs text-[#6F625D] mt-0.5">{subtitle}</p>}
+        <header className="shrink-0 bg-white border-b border-[#E6D8CC] px-4 py-3 sm:px-6 sm:py-5 z-20">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-3 min-h-[32px]">
+            <div className="min-w-0">
+              {title && <h1 className="font-serif text-lg sm:text-2xl font-bold text-[#2B2523] truncate">{title}</h1>}
+              {subtitle && <p className="text-[11px] sm:text-xs text-[#6F625D] mt-0.5 truncate">{subtitle}</p>}
             </div>
-            <div className="flex items-center gap-2 ml-auto sm:ml-0">
-              <span className="text-xs text-[#6F625D]">Signed in as:</span>
-              <span className="text-xs font-bold text-[#2B2523]">{user?.name || user?.full_name}</span>
+            <div className="flex items-center gap-1.5 sm:gap-2 ml-auto sm:ml-0 flex-wrap">
+              <span className="text-[11px] sm:text-xs text-[#6F625D]">Signed in:</span>
+              <span className="text-[11px] sm:text-xs font-bold text-[#2B2523] truncate max-w-[140px] sm:max-w-none">{user?.name || user?.full_name}</span>
               <Badge status={activeRole} />
             </div>
           </div>
@@ -299,7 +299,7 @@ export const DashboardLayout = ({ title, subtitle, children, role: propRole, act
 
         {/* Scrollable Main Content Area - Only right-side content scrolls */}
         <main className="flex-1 min-h-0 overflow-y-auto">
-          <div className="p-6 md:p-8 max-w-7xl w-full mx-auto space-y-6">
+          <div className="p-3.5 sm:p-6 md:p-8 max-w-7xl w-full mx-auto space-y-4 sm:space-y-6">
             {children}
           </div>
         </main>

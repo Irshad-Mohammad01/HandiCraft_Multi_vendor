@@ -56,29 +56,53 @@
   --shadow-lg: 0 10px 25px -3px rgba(43, 37, 35, 0.1);
 }
 
-* {
+*, *::before, *::after {
   box-sizing: border-box;
 }
 
 html {
   margin: 0;
   padding: 0;
+  max-width: 100%;
+  overflow-x: hidden;
   scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
   margin: 0;
   padding: 0;
+  width: 100%;
+  max-width: 100%;
   background-color: #FFF9F3;
   color: #2B2523;
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  overflow-x: clip;
+  overflow-x: hidden;
+  position: relative;
 }
 
 h1, h2, h3, h4, .font-serif, .editorial-heading {
   font-family: 'Playfair Display', Georgia, serif;
+}
+
+/* Global Mobile Modal & Dialog Viewport Safeguard */
+@media (max-width: 640px) {
+  .fixed.inset-0 > div,
+  .fixed.inset-0 > form,
+  [role="dialog"] {
+    max-width: calc(100vw - 24px) !important;
+    max-height: calc(100dvh - 32px) !important;
+  }
+}
+
+/* Global Table Responsive Overflow Protection */
+table {
+  max-width: 100%;
+}
+.overflow-x-auto {
+  -webkit-overflow-scrolling: touch;
 }
 
 /* ==========================================================

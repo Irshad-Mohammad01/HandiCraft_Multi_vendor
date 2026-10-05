@@ -957,49 +957,12 @@ function CustomerProductDetails({ id }) {
             </Link>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3.5 sm:gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2.5 sm:gap-6">
             {relatedProducts.map((p) => (
               <ProductCard key={p.id || p._id} product={p} />
             ))}
           </div>
         </section>
-      )}
-
-      {/* ==========================================================
-          5. STICKY MOBILE BOTTOM ACTION BAR (REQUIRED FOR MOBILE)
-          ========================================================== */}
-      {canShop && (
-        <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/98 backdrop-blur-md border-t border-[#E6D8CC] p-3 px-4 shadow-xl flex items-center justify-between gap-3">
-          <div className="flex flex-col">
-            <span className="text-[10px] text-[#6F625D]">Price</span>
-            <span className="font-serif text-lg font-bold text-[#A63D40]">
-              ₹{effectivePrice.toLocaleString('en-IN')}
-            </span>
-          </div>
-
-          <div className="flex items-center gap-2 flex-1 max-w-[240px]">
-            <button
-              type="button"
-              disabled={!inStock || addingToCart}
-              onClick={handleAddToCart}
-              className="flex-1 inline-flex items-center justify-center gap-1 py-2.5 px-3 rounded-xl bg-[#FFF9F3] border border-[#A63D40] text-[#A63D40] font-semibold text-xs transition-colors disabled:opacity-40"
-            >
-              <ShoppingBag className="w-3.5 h-3.5" />
-              <span>{addingToCart ? 'Added' : 'Add'}</span>
-            </button>
-
-            {inStock && (
-              <button
-                type="button"
-                onClick={handleBuyNow}
-                className="flex-1 inline-flex items-center justify-center gap-1 py-2.5 px-3 rounded-xl bg-[#A63D40] text-white font-semibold text-xs shadow-xs"
-              >
-                <Zap className="w-3.5 h-3.5" />
-                <span>Buy Now</span>
-              </button>
-            )}
-          </div>
-        </div>
       )}
     </div>
   );

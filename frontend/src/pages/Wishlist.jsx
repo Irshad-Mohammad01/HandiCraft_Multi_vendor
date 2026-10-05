@@ -165,20 +165,16 @@ export default function Wishlist() {
 
   // 5. Normal Populated Wishlist View
   return (
-    <div style={{ backgroundColor: 'var(--color-warm-cream)', minHeight: '100vh', padding: '40px 0 80px' }}>
-      <div className="container">
-        <h1 style={{ fontFamily: 'Playfair Display, serif', fontSize: '2rem', color: 'var(--color-text-primary)', marginBottom: '8px' }}>
+    <div style={{ backgroundColor: 'var(--color-warm-cream)', minHeight: '100vh' }}>
+      <div className="craft-container py-8 sm:py-12 safe-bottom-padding">
+        <h1 className="font-serif text-2xl sm:text-3xl font-bold text-[#2B2523] mb-1">
           Saved Handicrafts
         </h1>
-        <p style={{ color: 'var(--color-text-secondary)', marginBottom: '32px' }}>
+        <p className="text-xs sm:text-sm text-[#6F625D] mb-6 sm:mb-8">
           {items.length} {items.length === 1 ? 'craft' : 'crafts'} preserved in your collection
         </p>
 
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
-          gap: '24px'
-        }}>
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2.5 sm:gap-6">
           {items.map((product) => {
             if (!product) return null;
             const pId = String(product.id || product.product_id || product._id || '');
@@ -189,32 +185,15 @@ export default function Wishlist() {
             return (
               <div
                 key={pId || Math.random()}
-                style={{
-                  backgroundColor: 'var(--color-white)',
-                  borderRadius: 'var(--radius-lg)',
-                  border: '1px solid var(--color-border)',
-                  overflow: 'hidden',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  boxShadow: 'var(--shadow-sm)',
-                  transition: 'transform 0.2s ease, box-shadow 0.2s ease'
-                }}
+                className="bg-white rounded-2xl border border-[#E6D8CC] overflow-hidden flex flex-col shadow-xs transition-all duration-200"
               >
                 {/* Image */}
-                <div style={{
-                  height: '240px',
-                  backgroundColor: 'var(--color-soft-beige)',
-                  position: 'relative',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  overflow: 'hidden'
-                }}>
-                  <Link to={`/products/${pId}`} style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <div className="relative aspect-square w-full bg-[#FAF7F2] p-2.5 sm:p-4 flex items-center justify-center overflow-hidden border-b border-[#F0E6DC]/70">
+                  <Link to={`/products/${pId}`} className="w-full h-full flex items-center justify-center">
                     <img
                       src={image}
                       alt={product.name || 'Handcrafted item'}
-                      style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }}
+                      className="w-full h-full object-contain"
                       onError={(e) => {
                         e.target.src = 'https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?auto=format&fit=crop&w=400&q=80';
                       }}
@@ -227,55 +206,34 @@ export default function Wishlist() {
                         removeFromWishlist(pId);
                       }
                     }}
-                    style={{
-                      position: 'absolute',
-                      top: '12px',
-                      right: '12px',
-                      width: '36px',
-                      height: '36px',
-                      borderRadius: '50%',
-                      backgroundColor: 'rgba(255, 255, 255, 0.9)',
-                      border: 'none',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      cursor: 'pointer',
-                      color: 'var(--color-error)'
-                    }}
+                    className="absolute top-2 right-2 sm:top-2.5 sm:right-2.5 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white/90 shadow-xs flex items-center justify-center text-[#B84242] hover:bg-white cursor-pointer"
                     title="Remove from saved crafts"
                     aria-label="Remove from saved crafts"
                   >
-                    <Trash2 size={16} />
+                    <Trash2 className="w-3.5 h-3.5" />
                   </button>
                 </div>
 
                 {/* Content */}
-                <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', flex: 1 }}>
+                <div className="p-2.5 sm:p-4 flex flex-col flex-1">
                   <Link
                     to={`/products/${pId}`}
-                    style={{
-                      fontWeight: 600,
-                      color: 'var(--color-text-primary)',
-                      textDecoration: 'none',
-                      fontSize: '1rem',
-                      marginBottom: '6px',
-                      lineHeight: 1.4
-                    }}
+                    className="font-serif text-xs sm:text-base font-semibold text-[#2B2523] hover:text-[#A63D40] transition-colors line-clamp-1 mb-1 block"
                   >
                     {product.name || 'Handcrafted Artisan Item'}
                   </Link>
 
                   {(product.artisan_name || product.created_by) && (
-                    <div style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)', marginBottom: '12px' }}>
+                    <div className="text-[10px] sm:text-xs text-[#6F625D] truncate mb-2">
                       By {product.artisan_name || product.created_by}
                     </div>
                   )}
 
-                  <div style={{ marginTop: 'auto', paddingTop: '12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
-                    <span style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--color-primary-terracotta)' }}>
+                  <div className="mt-auto pt-2 sm:pt-3 border-t border-[#F0E6DC] flex items-center justify-between gap-1 mb-2.5 sm:mb-3">
+                    <span className="font-serif text-xs sm:text-base font-bold text-[#A63D40]">
                       ₹{price.toLocaleString('en-IN')}
                     </span>
-                    <span style={{ fontSize: '0.8rem', color: inStock ? 'var(--color-success)' : 'var(--color-error)' }}>
+                    <span className={`text-[10px] sm:text-xs font-medium ${inStock ? 'text-emerald-700' : 'text-[#B84242]'}`}>
                       {inStock ? 'In Stock' : 'Out of Stock'}
                     </span>
                   </div>

@@ -489,7 +489,7 @@ export default function Account({ defaultTab }) {
         {/* ==========================================================
             RIGHT COLUMN: TAB DETAILS (lg:col-span-8)
             ========================================================== */}
-        <div className="lg:col-span-8 bg-white rounded-3xl border border-[#E6D8CC] p-6 sm:p-8 craft-card-shadow">
+        <div className="lg:col-span-8 bg-white rounded-2xl sm:rounded-3xl border border-[#E6D8CC] p-4 sm:p-8 craft-card-shadow">
           {/* TAB 1: PROFILE */}
           {activeTab === 'profile' && (
             <div className="space-y-6">

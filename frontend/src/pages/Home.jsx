@@ -247,133 +247,71 @@ export const Home = () => {
           1. HERO BANNER SECTION (WIDE DESKTOP + SEPARATE MOBILE COMPOSITION)
           ========================================================== */}
       <section className="craft-container pt-3 sm:pt-4">
-        {/* DESKTOP HERO BANNER COMPOSITION (hidden on small mobile) */}
-        <div className="hidden sm:flex relative rounded-3xl overflow-hidden bg-[#2B2523] min-h-[460px] lg:min-h-[520px] xl:min-h-[560px] items-center border border-[#E6D8CC] shadow-md">
-      {/* Banner Background Image with Craft Terracotta Vignette Overlay */}
-      <div className="absolute inset-0">
-        <img
-          src={activeBanner.image_url}
-          alt={activeBanner.title}
-          className="w-full h-full object-cover object-center brightness-70 transition-opacity duration-700"
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#2B2523]/95 via-[#2B2523]/70 to-transparent" />
-      </div>
-
-      {/* Banner Editorial Copy */}
-      <div className="relative z-10 p-8 lg:p-14 xl:p-16 max-w-2xl text-white space-y-4 sm:space-y-5">
-        {activeBanner.subtitle && (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#A63D40]/90 text-[#FFF9F3] text-xs font-semibold uppercase tracking-widest border border-[#C69A5B]/40">
-            <Sparkles className="w-3.5 h-3.5 text-[#C69A5B]" />
-            {activeBanner.subtitle}
-          </span>
-        )}
-        <h1 className="font-serif text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold leading-[1.15] tracking-tight text-[#FFF9F3]">
-          {activeBanner.title}
-        </h1>
-        <p className="text-sm md:text-base text-[#F4E8DC] leading-relaxed max-w-xl line-clamp-3">
-          {activeBanner.description}
-        </p>
-        <div className="pt-2 flex items-center gap-4">
-          <Link
-            to={activeBanner.button_link || '/products'}
-            className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full bg-[#A63D40] text-white hover:bg-[#8F3034] text-sm font-semibold shadow-md hover:shadow-lg transition-all"
-          >
-            <span>{activeBanner.button_text || 'Explore Collection'}</span>
-            <ArrowRight className="w-4 h-4" />
-          </Link>
-          <Link
-            to="/about"
-            className="inline-flex items-center gap-2 px-5 py-3 rounded-full bg-white/10 hover:bg-white/20 text-[#FFF9F3] text-xs font-semibold border border-white/20 backdrop-blur-xs transition-colors"
-          >
-            <span>Artisan Heritage</span>
-          </Link>
-        </div>
-      </div>
-
-      {/* Carousel Navigation Arrows */}
-      {banners.length > 1 && (
-        <div className="absolute bottom-6 right-6 z-20 flex items-center gap-2">
-          <button
-            type="button"
-            onClick={prevBanner}
-            aria-label="Previous Slide"
-            className="p-3 rounded-full bg-black/50 text-white hover:bg-[#A63D40] border border-white/20 transition-colors cursor-pointer"
-          >
-            <ChevronLeft className="w-4 h-4" />
-          </button>
-          <button
-            type="button"
-            onClick={nextBanner}
-            aria-label="Next Slide"
-            className="p-3 rounded-full bg-black/50 text-white hover:bg-[#A63D40] border border-white/20 transition-colors cursor-pointer"
-          >
-            <ChevronRight className="w-4 h-4" />
-          </button>
-        </div>
-      )}
-    </div>
-
-    {/* MOBILE SPECIFIC HERO COMPOSITION (Shown on mobile screens < 640px) */}
-    <div className="sm:hidden flex flex-col rounded-2xl overflow-hidden bg-[#2B2523] border border-[#E6D8CC] shadow-md">
-      {/* Mobile Image Container */}
-      <div className="relative aspect-16/10 w-full overflow-hidden">
-        <img
-          src={activeBanner.mobile_image_url || activeBanner.image_url}
-          alt={activeBanner.title}
-          className="w-full h-full object-cover object-center brightness-75"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#2B2523] via-transparent to-black/30" />
-        
-        {activeBanner.subtitle && (
-          <div className="absolute top-3 left-3">
-            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#A63D40] text-[#FFF9F3] text-[10px] font-bold uppercase tracking-wider">
-              <Sparkles className="w-3 h-3 text-[#C69A5B]" />
-              {activeBanner.subtitle}
-            </span>
+        {/* UNIFIED RESPONSIVE HERO BANNER */}
+        <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden bg-[#2B2523] min-h-[340px] sm:min-h-[460px] lg:min-h-[520px] xl:min-h-[560px] flex items-center border border-[#E6D8CC] shadow-md">
+          {/* Banner Background Image with Craft Vignette Overlay */}
+          <div className="absolute inset-0">
+            <img
+              src={activeBanner.mobile_image_url || activeBanner.image_url}
+              alt={activeBanner.title}
+              className="w-full h-full object-cover object-center brightness-60 sm:brightness-70 transition-opacity duration-700"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t sm:bg-gradient-to-r from-[#2B2523] via-[#2B2523]/80 sm:via-[#2B2523]/70 to-transparent" />
           </div>
-        )}
 
-        {banners.length > 1 && (
-          <div className="absolute bottom-3 right-3 flex items-center gap-1.5 z-10">
-            <button
-              type="button"
-              onClick={prevBanner}
-              aria-label="Previous Slide"
-              className="p-2 rounded-full bg-black/60 text-white border border-white/20"
-            >
-              <ChevronLeft className="w-3.5 h-3.5" />
-            </button>
-            <button
-              type="button"
-              onClick={nextBanner}
-              aria-label="Next Slide"
-              className="p-2 rounded-full bg-black/60 text-white border border-white/20"
-            >
-              <ChevronRight className="w-3.5 h-3.5" />
-            </button>
+          {/* Banner Editorial Copy */}
+          <div className="relative z-10 p-5 sm:p-8 lg:p-14 xl:p-16 max-w-2xl text-white space-y-3 sm:space-y-5">
+            {activeBanner.subtitle && (
+              <span className="inline-flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full bg-[#A63D40]/90 text-[#FFF9F3] text-[10px] sm:text-xs font-semibold uppercase tracking-wider sm:tracking-widest border border-[#C69A5B]/40">
+                <Sparkles className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#C69A5B]" />
+                {activeBanner.subtitle}
+              </span>
+            )}
+            <h1 className="font-serif text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold leading-tight sm:leading-[1.15] tracking-tight text-[#FFF9F3]">
+              {activeBanner.title}
+            </h1>
+            <p className="text-xs sm:text-sm md:text-base text-[#F4E8DC] leading-relaxed max-w-xl line-clamp-2 sm:line-clamp-3">
+              {activeBanner.description}
+            </p>
+            <div className="pt-1 sm:pt-2 flex flex-wrap items-center gap-2.5 sm:gap-4">
+              <Link
+                to={activeBanner.button_link || '/products'}
+                className="inline-flex items-center gap-1.5 sm:gap-2 px-4 sm:px-6 py-2.5 sm:py-3.5 rounded-full bg-[#A63D40] text-white hover:bg-[#8F3034] text-xs sm:text-sm font-semibold shadow-md hover:shadow-lg transition-all"
+              >
+                <span>{activeBanner.button_text || 'Explore Collection'}</span>
+                <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+              </Link>
+              <Link
+                to="/about"
+                className="inline-flex items-center gap-1.5 sm:gap-2 px-3.5 sm:px-5 py-2 sm:py-3 rounded-full bg-white/10 hover:bg-white/20 text-[#FFF9F3] text-[11px] sm:text-xs font-semibold border border-white/20 backdrop-blur-xs transition-colors"
+              >
+                <span>Artisan Heritage</span>
+              </Link>
+            </div>
           </div>
-        )}
-      </div>
 
-      {/* Mobile Content Details */}
-      <div className="p-5 text-white space-y-3 bg-[#2B2523]">
-        <h1 className="font-serif text-2xl font-bold leading-tight text-[#FFF9F3]">
-          {activeBanner.title}
-        </h1>
-        <p className="text-xs text-[#F4E8DC] leading-relaxed line-clamp-2">
-          {activeBanner.description}
-        </p>
-        <div className="pt-1">
-          <Link
-            to={activeBanner.button_link || '/products'}
-            className="w-full inline-flex items-center justify-center gap-2 py-3 rounded-xl bg-[#A63D40] text-white hover:bg-[#8F3034] text-xs font-semibold shadow-xs"
-          >
-            <span>{activeBanner.button_text || 'Explore Collection'}</span>
-            <ArrowRight className="w-3.5 h-3.5" />
-          </Link>
+          {/* Carousel Navigation Arrows */}
+          {banners.length > 1 && (
+            <div className="absolute bottom-4 right-4 sm:bottom-6 sm:right-6 z-20 flex items-center gap-1.5 sm:gap-2">
+              <button
+                type="button"
+                onClick={prevBanner}
+                aria-label="Previous Slide"
+                className="p-2 sm:p-3 rounded-full bg-black/60 sm:bg-black/50 text-white hover:bg-[#A63D40] border border-white/20 transition-colors cursor-pointer"
+              >
+                <ChevronLeft className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+              </button>
+              <button
+                type="button"
+                onClick={nextBanner}
+                aria-label="Next Slide"
+                className="p-2 sm:p-3 rounded-full bg-black/60 sm:bg-black/50 text-white hover:bg-[#A63D40] border border-white/20 transition-colors cursor-pointer"
+              >
+                <ChevronRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+              </button>
+            </div>
+          )}
         </div>
-      </div>
-    </div>
   </section>
 
       {/* ==========================================================
@@ -1026,48 +964,48 @@ export const Home = () => {
           ========================================================== */}
       {(!isOwner || !homeAdminTab) && (
         <>
-          {/* ==========================================================
+      {/* ==========================================================
           2. VALUE PROPOSITIONS STRIP
           ========================================================== */}
       <section className="craft-container">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 p-4 sm:p-6 bg-white rounded-2xl border border-[#E6D8CC] craft-card-shadow">
-          <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-[#FFF9F3] text-[#A63D40] border border-[#E6D8CC] shrink-0">
-              <ShieldCheck className="w-5 h-5 text-[#A63D40]" />
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-4 p-3.5 sm:p-6 bg-white rounded-2xl border border-[#E6D8CC] craft-card-shadow">
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+            <div className="p-2 sm:p-2.5 rounded-xl bg-[#FFF9F3] text-[#A63D40] border border-[#E6D8CC] shrink-0">
+              <ShieldCheck className="w-4 h-4 sm:w-5 sm:h-5 text-[#A63D40]" />
             </div>
-            <div>
-              <h4 className="text-xs sm:text-sm font-bold text-[#2B2523]">100% Authentic</h4>
-              <p className="text-[11px] text-[#6F625D]">Hereditary Artisans</p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-[#FFF9F3] text-[#C69A5B] border border-[#E6D8CC] shrink-0">
-              <Award className="w-5 h-5 text-[#C69A5B]" />
-            </div>
-            <div>
-              <h4 className="text-xs sm:text-sm font-bold text-[#2B2523]">GI Certified</h4>
-              <p className="text-[11px] text-[#6F625D]">Regional Craft Clusters</p>
+            <div className="min-w-0">
+              <h4 className="text-[11px] sm:text-sm font-bold text-[#2B2523] truncate sm:whitespace-normal">100% Authentic</h4>
+              <p className="text-[10px] sm:text-[11px] text-[#6F625D] truncate sm:whitespace-normal">Hereditary Artisans</p>
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-[#FFF9F3] text-[#3F7D5A] border border-[#E6D8CC] shrink-0">
-              <Truck className="w-5 h-5 text-[#3F7D5A]" />
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+            <div className="p-2 sm:p-2.5 rounded-xl bg-[#FFF9F3] text-[#C69A5B] border border-[#E6D8CC] shrink-0">
+              <Award className="w-4 h-4 sm:w-5 sm:h-5 text-[#C69A5B]" />
             </div>
-            <div>
-              <h4 className="text-xs sm:text-sm font-bold text-[#2B2523]">Pan-India Shipping</h4>
-              <p className="text-[11px] text-[#6F625D]">Secure Fragile Packing</p>
+            <div className="min-w-0">
+              <h4 className="text-[11px] sm:text-sm font-bold text-[#2B2523] truncate sm:whitespace-normal">GI Certified</h4>
+              <p className="text-[10px] sm:text-[11px] text-[#6F625D] truncate sm:whitespace-normal">Regional Craft Clusters</p>
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-[#FFF9F3] text-[#A63D40] border border-[#E6D8CC] shrink-0">
-              <RotateCcw className="w-5 h-5 text-[#A63D40]" />
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+            <div className="p-2 sm:p-2.5 rounded-xl bg-[#FFF9F3] text-[#3F7D5A] border border-[#E6D8CC] shrink-0">
+              <Truck className="w-4 h-4 sm:w-5 sm:h-5 text-[#3F7D5A]" />
             </div>
-            <div>
-              <h4 className="text-xs sm:text-sm font-bold text-[#2B2523]">Fair Trade Value</h4>
-              <p className="text-[11px] text-[#6F625D]">Direct Weaver Earnings</p>
+            <div className="min-w-0">
+              <h4 className="text-[11px] sm:text-sm font-bold text-[#2B2523] truncate sm:whitespace-normal">Pan-India Shipping</h4>
+              <p className="text-[10px] sm:text-[11px] text-[#6F625D] truncate sm:whitespace-normal">Secure Fragile Packing</p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+            <div className="p-2 sm:p-2.5 rounded-xl bg-[#FFF9F3] text-[#A63D40] border border-[#E6D8CC] shrink-0">
+              <RotateCcw className="w-4 h-4 sm:w-5 sm:h-5 text-[#A63D40]" />
+            </div>
+            <div className="min-w-0">
+              <h4 className="text-[11px] sm:text-sm font-bold text-[#2B2523] truncate sm:whitespace-normal">Fair Trade Value</h4>
+              <p className="text-[10px] sm:text-[11px] text-[#6F625D] truncate sm:whitespace-normal">Direct Weaver Earnings</p>
             </div>
           </div>
         </div>
@@ -1163,7 +1101,7 @@ export const Home = () => {
         </div>
 
         {featuredProducts.length > 0 ? (
-          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3.5 sm:gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2.5 sm:gap-6">
             {featuredProducts.map((product) => (
               <ProductCard
                 key={product.id || product._id}

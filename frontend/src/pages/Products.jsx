@@ -149,7 +149,7 @@ export const Products = () => {
             <span>Authenticated Indian Handicrafts</span>
           </div>
 
-          <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-[#2B2523]">
+          <h1 className="font-serif text-2xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-[#2B2523]">
             {selectedCategory !== 'All' ? selectedCategory : 'All Handcrafted Collections'}
           </h1>
 
@@ -373,7 +373,7 @@ export const Products = () => {
             </button>
           </div>
         ) : filteredProducts.length > 0 ? (
-          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-3 sm:gap-5 lg:gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-2.5 sm:gap-5 lg:gap-6">
             {filteredProducts.map((product) => (
               <ProductCard key={product.id || product._id} product={product} />
             ))}

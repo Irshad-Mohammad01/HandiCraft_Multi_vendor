@@ -197,26 +197,26 @@ export const Navbar = () => {
   return (
     <header className="sticky top-0 z-50 w-full bg-white/95 backdrop-blur-md border-b border-[#E6D8CC] shadow-xs">
       {/* 1. TOP ANNOUNCEMENT BAR */}
-      <div className="bg-[#A63D40] text-white text-xs py-1.5 px-4 text-center font-medium tracking-wide flex items-center justify-center gap-2">
+      <div className="bg-[#A63D40] text-white text-[11px] sm:text-xs py-1.5 px-3 sm:px-4 text-center font-medium tracking-normal sm:tracking-wide flex items-center justify-center gap-1.5 overflow-hidden">
         <Sparkles className="w-3.5 h-3.5 text-[#C69A5B] shrink-0" />
-        <span className="truncate max-w-4xl">
+        <span className="truncate max-w-full">
           Authentic Indian Handicrafts Directly from Hereditary Master Artisans • Free Pan-India Delivery on Orders Above ₹999
         </span>
       </div>
 
       {/* 2. MAIN NAVBAR WITH WIDE RESPONSIVE DESKTOP LAYOUT */}
       <div className="craft-container">
-        <div className="flex items-center justify-between h-20 gap-4 lg:gap-8">
+        <div className="flex items-center justify-between h-16 sm:h-20 gap-2 sm:gap-4 lg:gap-8">
           {/* Brand Logo */}
-          <Link to="/" className="flex items-center gap-2.5 shrink-0 group">
-            <div className="w-10 h-10 rounded-xl bg-[#FFF9F3] border border-[#E6D8CC] flex items-center justify-center text-[#A63D40] group-hover:bg-[#F4E8DC] transition-colors">
-              <Sparkles className="w-5 h-5 text-[#A63D40]" />
+          <Link to="/" className="flex items-center gap-2 sm:gap-2.5 shrink-0 group">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-[#FFF9F3] border border-[#E6D8CC] flex items-center justify-center text-[#A63D40] group-hover:bg-[#F4E8DC] transition-colors">
+              <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-[#A63D40]" />
             </div>
             <div className="flex flex-col">
-              <span className="font-serif text-2xl font-bold tracking-wider text-[#2B2523] group-hover:text-[#A63D40] transition-colors">
+              <span className="font-serif text-xl sm:text-2xl font-bold tracking-wider text-[#2B2523] group-hover:text-[#A63D40] transition-colors">
                 CRAFT<span className="text-[#A63D40]">NEST</span>
               </span>
-              <span className="text-[10px] tracking-[0.2em] uppercase font-semibold text-[#C69A5B] -mt-1">
+              <span className="text-[8px] sm:text-[10px] tracking-[0.15em] sm:tracking-[0.2em] uppercase font-semibold text-[#C69A5B] -mt-0.5 sm:-mt-1">
                 Heritage Handicrafts
               </span>
             </div>
@@ -264,7 +264,7 @@ export const Navbar = () => {
           </nav>
 
           {/* Right Action Icons (Notification Bell, Wishlist, Cart, Account) */}
-          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+          <div className="flex items-center gap-1 sm:gap-2.5 shrink-0">
             {/* Customer Notification Bell */}
             {canShop && (
               <div className="relative" ref={notifRef}>
@@ -278,11 +278,11 @@ export const Navbar = () => {
                     setNotificationsOpen(!notificationsOpen);
                     setAccountDropdownOpen(false);
                   }}
-                  className="relative p-2 text-[#2B2523] hover:text-[#A63D40] hover:bg-[#FFF9F3] rounded-full transition-colors cursor-pointer"
+                  className="relative p-1.5 sm:p-2 text-[#2B2523] hover:text-[#A63D40] hover:bg-[#FFF9F3] rounded-full transition-colors cursor-pointer"
                   aria-label="Notifications"
                   title="Notifications"
                 >
-                  <Bell className="w-5 h-5" />
+                  <Bell className="w-4.5 h-4.5 sm:w-5 sm:h-5" />
                   {unreadCount > 0 && (
                     <span className="absolute -top-1 -right-1 bg-[#A63D40] text-white text-[10px] font-bold min-w-[16px] h-4 px-1 rounded-full flex items-center justify-center animate-pulse shadow-xs">
                       {unreadCount > 9 ? '9+' : unreadCount}
@@ -290,9 +290,9 @@ export const Navbar = () => {
                   )}
                 </button>
 
-                {/* Notifications Dropdown Panel */}
+                {/* Notifications Dropdown Panel - Guaranteed Viewport Bound */}
                 {notificationsOpen && (
-                  <div className="absolute right-0 mt-2 w-80 sm:w-96 bg-white rounded-2xl shadow-2xl border border-[#E6D8CC] py-3 z-50 animate-in fade-in slide-in-from-top-2 duration-150 craft-card-shadow">
+                  <div className="fixed sm:absolute left-3 right-3 sm:left-auto sm:right-0 mt-2 w-auto sm:w-96 max-w-[calc(100vw-24px)] bg-white rounded-2xl shadow-2xl border border-[#E6D8CC] py-3 z-50 animate-in fade-in slide-in-from-top-2 duration-150 craft-card-shadow">
                     {/* Header */}
                     <div className="px-4 pb-3 border-b border-[#E6D8CC] flex items-center justify-between">
                       <div className="flex items-center gap-2">
@@ -418,10 +418,10 @@ export const Navbar = () => {
             {canShop && (
               <Link
                 to="/wishlist"
-                className="relative p-2 text-[#2B2523] hover:text-[#A63D40] hover:bg-[#FFF9F3] rounded-full transition-colors"
+                className="relative p-1.5 sm:p-2 text-[#2B2523] hover:text-[#A63D40] hover:bg-[#FFF9F3] rounded-full transition-colors"
                 aria-label="View Wishlist"
               >
-                <Heart className="w-5 h-5" />
+                <Heart className="w-4.5 h-4.5 sm:w-5 sm:h-5" />
                 {wishlistCount > 0 && (
                   <span className="absolute -top-1 -right-1 bg-[#A63D40] text-white text-[10px] font-bold min-w-[16px] h-4 px-1 rounded-full flex items-center justify-center">
                     {wishlistCount}
@@ -434,10 +434,10 @@ export const Navbar = () => {
             {canShop && (
               <Link
                 to="/cart"
-                className="relative p-2 text-[#2B2523] hover:text-[#A63D40] hover:bg-[#FFF9F3] rounded-full transition-colors"
+                className="relative p-1.5 sm:p-2 text-[#2B2523] hover:text-[#A63D40] hover:bg-[#FFF9F3] rounded-full transition-colors"
                 aria-label="View Shopping Basket"
               >
-                <ShoppingBag className="w-5 h-5" />
+                <ShoppingBag className="w-4.5 h-4.5 sm:w-5 sm:h-5" />
                 {totalItemsCount > 0 && (
                   <span className="absolute -top-1 -right-1 bg-[#A63D40] text-white text-[10px] font-bold min-w-[16px] h-4 px-1 rounded-full flex items-center justify-center">
                     {totalItemsCount}
@@ -455,9 +455,9 @@ export const Navbar = () => {
                     setAccountDropdownOpen(!accountDropdownOpen);
                     setNotificationsOpen(false);
                   }}
-                  className="flex items-center gap-2 p-1.5 sm:px-3 sm:py-2 rounded-full border border-[#E6D8CC] bg-[#FFF9F3] hover:bg-[#F4E8DC] transition-colors cursor-pointer text-xs font-semibold text-[#2B2523]"
+                  className="flex items-center gap-1.5 p-1 sm:px-3 sm:py-2 rounded-full border border-[#E6D8CC] bg-[#FFF9F3] hover:bg-[#F4E8DC] transition-colors cursor-pointer text-xs font-semibold text-[#2B2523]"
                 >
-                  <div className="w-6 h-6 rounded-full bg-[#A63D40] text-white flex items-center justify-center text-xs font-bold uppercase">
+                  <div className="w-6 h-6 rounded-full bg-[#A63D40] text-white flex items-center justify-center text-xs font-bold uppercase shrink-0">
                     {(user?.name || user?.username || 'U').charAt(0)}
                   </div>
                   <span className="hidden sm:inline max-w-[110px] truncate">
@@ -563,7 +563,7 @@ export const Navbar = () => {
             ) : (
               <Link
                 to="/login"
-                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#A63D40] text-white hover:bg-[#8F3034] text-xs font-semibold shadow-xs transition-colors"
+                className="inline-flex items-center gap-1 px-2.5 py-1.5 sm:px-4 sm:py-2 rounded-full bg-[#A63D40] text-white hover:bg-[#8F3034] text-[11px] sm:text-xs font-semibold shadow-xs transition-colors shrink-0"
               >
                 <User className="w-3.5 h-3.5" />
                 <span>Sign In</span>
@@ -574,28 +574,28 @@ export const Navbar = () => {
             <button
               type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden p-2 rounded-lg text-[#2B2523] hover:bg-[#FFF9F3] transition-colors"
+              className="lg:hidden p-1.5 sm:p-2 rounded-lg text-[#2B2523] hover:bg-[#FFF9F3] transition-colors shrink-0"
               aria-label="Toggle Navigation"
             >
-              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              {mobileMenuOpen ? <X className="w-5 h-5 sm:w-6 sm:h-6" /> : <Menu className="w-5 h-5 sm:w-6 sm:h-6" />}
             </button>
           </div>
         </div>
 
         {/* 3. MOBILE SEARCH ROW (Full Width Row) */}
-        <div className="md:hidden pb-3 pt-1">
-          <form onSubmit={handleSearchSubmit} className="relative">
+        <div className="md:hidden pb-2.5 pt-0.5 px-1 sm:px-0">
+          <form onSubmit={handleSearchSubmit} className="relative w-full">
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search handicrafts, blue pottery, handloom..."
-              className="w-full bg-[#FFF9F3] border border-[#E6D8CC] rounded-full py-2 pl-4 pr-10 text-xs text-[#2B2523] placeholder-[#6F625D]/70 focus:bg-white focus:border-[#A63D40]"
+              className="w-full bg-[#FFF9F3] border border-[#E6D8CC] rounded-full py-2 pl-4 pr-11 text-xs text-[#2B2523] placeholder-[#6F625D]/70 focus:bg-white focus:border-[#A63D40] focus:ring-1 focus:ring-[#A63D40] transition-all"
             />
             <button
               type="submit"
               aria-label="Search"
-              className="absolute right-1 top-1/2 -translate-y-1/2 p-1.5 rounded-full bg-[#A63D40] text-white"
+              className="absolute right-1 top-1/2 -translate-y-1/2 p-1.5 rounded-full bg-[#A63D40] text-white hover:bg-[#8F3034] cursor-pointer transition-colors"
             >
               <Search className="w-3.5 h-3.5" />
             </button>

@@ -68,13 +68,13 @@ export default function Contact() {
   };
 
   return (
-    <div style={{ backgroundColor: 'var(--color-warm-cream)', minHeight: '100vh', padding: '48px 0 80px' }}>
-      <div className="container">
-        <div style={{ maxWidth: '600px', margin: '0 auto 48px', textAlign: 'center' }}>
-          <h1 style={{ fontFamily: 'Playfair Display, serif', fontSize: '2.25rem', color: 'var(--color-text-primary)', marginBottom: '12px' }}>
+    <div style={{ backgroundColor: 'var(--color-warm-cream)', minHeight: '100vh' }}>
+      <div className="craft-container py-8 sm:py-12 safe-bottom-padding">
+        <div style={{ maxWidth: '600px', margin: '0 auto 36px', textAlign: 'center' }}>
+          <h1 className="font-serif text-2xl sm:text-4xl font-bold text-[#2B2523] mb-3">
             We’d Love to Hear From You
           </h1>
-          <p style={{ color: 'var(--color-text-secondary)', fontSize: '1rem', lineHeight: 1.6 }}>
+          <p className="text-xs sm:text-base text-[#6F625D] leading-relaxed">
             {settings?.contact_page_info ||
               'Whether you have questions about custom handicraft orders, artisan guild partnerships, or delivery status, our craft care team is here to assist.'}
           </p>
@@ -82,16 +82,16 @@ export default function Contact() {
 
         <div style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-          gap: '40px',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))',
+          gap: 'clamp(20px, 4vw, 40px)',
           maxWidth: '1000px',
           margin: '0 auto'
         }}>
           {/* Contact Details */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
             <div style={{
               backgroundColor: 'var(--color-white)',
-              padding: '28px',
+              padding: 'clamp(16px, 3.5vw, 24px)',
               borderRadius: 'var(--radius-lg)',
               border: '1px solid var(--color-border)',
               display: 'flex',
@@ -101,10 +101,10 @@ export default function Contact() {
               <div style={{ width: '44px', height: '44px', borderRadius: '50%', backgroundColor: 'var(--color-soft-beige)', color: 'var(--color-primary-terracotta)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                 <Mail size={20} />
               </div>
-              <div>
+              <div className="min-w-0">
                 <h4 style={{ margin: '0 0 6px 0', color: 'var(--color-text-primary)' }}>Email Support</h4>
                 <p style={{ margin: '0 0 4px 0', color: 'var(--color-text-secondary)', fontSize: '0.9rem' }}>General & Order Inquiries:</p>
-                <a href={`mailto:${settings?.support_email || 'care@craftnest.in'}`} style={{ color: 'var(--color-primary-terracotta)', fontWeight: 600, textDecoration: 'none' }}>
+                <a href={`mailto:${settings?.support_email || 'care@craftnest.in'}`} className="break-all" style={{ color: 'var(--color-primary-terracotta)', fontWeight: 600, textDecoration: 'none' }}>
                   {settings?.support_email || 'care@craftnest.in'}
                 </a>
               </div>
@@ -112,7 +112,7 @@ export default function Contact() {
 
             <div style={{
               backgroundColor: 'var(--color-white)',
-              padding: '28px',
+              padding: 'clamp(16px, 3.5vw, 24px)',
               borderRadius: 'var(--radius-lg)',
               border: '1px solid var(--color-border)',
               display: 'flex',
@@ -122,7 +122,7 @@ export default function Contact() {
               <div style={{ width: '44px', height: '44px', borderRadius: '50%', backgroundColor: 'var(--color-soft-beige)', color: 'var(--color-primary-terracotta)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                 <Phone size={20} />
               </div>
-              <div>
+              <div className="min-w-0">
                 <h4 style={{ margin: '0 0 6px 0', color: 'var(--color-text-primary)' }}>Artisan Hotline</h4>
                 <p style={{ margin: '0 0 4px 0', color: 'var(--color-text-secondary)', fontSize: '0.9rem' }}>
                   {settings?.working_hours || 'Mon - Sat, 10:00 AM - 7:00 PM IST'}:
@@ -140,7 +140,7 @@ export default function Contact() {
 
             <div style={{
               backgroundColor: 'var(--color-white)',
-              padding: '28px',
+              padding: 'clamp(16px, 3.5vw, 24px)',
               borderRadius: 'var(--radius-lg)',
               border: '1px solid var(--color-border)',
               display: 'flex',
@@ -150,7 +150,7 @@ export default function Contact() {
               <div style={{ width: '44px', height: '44px', borderRadius: '50%', backgroundColor: 'var(--color-soft-beige)', color: 'var(--color-primary-terracotta)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                 <MapPin size={20} />
               </div>
-              <div>
+              <div className="min-w-0">
                 <h4 style={{ margin: '0 0 6px 0', color: 'var(--color-text-primary)' }}>Heritage Hub</h4>
                 <p style={{ margin: 0, color: 'var(--color-text-secondary)', fontSize: '0.9rem', lineHeight: 1.5 }}>
                   {settings?.business_address || 'CraftNest Artisan Hub, Bapu Bazaar, Jaipur, Rajasthan 302001'}
@@ -164,7 +164,7 @@ export default function Contact() {
             backgroundColor: 'var(--color-white)',
             borderRadius: 'var(--radius-lg)',
             border: '1px solid var(--color-border)',
-            padding: '36px',
+            padding: 'clamp(16px, 4vw, 36px)',
             boxShadow: 'var(--shadow-sm)'
           }}>
             {submitted ? (

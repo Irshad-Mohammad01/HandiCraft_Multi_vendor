@@ -389,17 +389,36 @@ export default function Checkout() {
   if (!isAuthenticated) return null;
 
   return (
-    <div style={{ backgroundColor: 'var(--color-warm-cream)', minHeight: '100vh', padding: '40px 0 80px' }}>
-      <div className="container" style={{ maxWidth: '1080px', margin: '0 auto', padding: '0 16px' }}>
+    <div 
+      className="safe-bottom-padding"
+      style={{ 
+        backgroundColor: 'var(--color-warm-cream)', 
+        minHeight: '100vh', 
+        paddingTop: '20px', 
+        paddingBottom: '96px', 
+        width: '100%',
+        maxWidth: '100%',
+        boxSizing: 'border-box',
+        overflowX: 'hidden'
+      }}
+    >
+      <div 
+        style={{ 
+          maxWidth: '1080px', 
+          margin: '0 auto', 
+          paddingLeft: '12px', 
+          paddingRight: '12px',
+          width: '100%',
+          boxSizing: 'border-box',
+          minWidth: 0
+        }}
+      >
         
-        {/* Step Indicator */}
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: '16px',
-          marginBottom: '36px'
-        }}>
+        {/* Step Indicator - Desktop (sm and above >= 640px) */}
+        <div 
+          className="hidden sm:flex items-center justify-center gap-3 md:gap-4 mb-7 md:mb-9"
+          style={{ width: '100%', maxWidth: '100%', minWidth: 0 }}
+        >
           <div style={{ 
             display: 'flex', 
             alignItems: 'center', 
@@ -418,10 +437,10 @@ export default function Checkout() {
               justifyContent: 'center',
               fontSize: '0.85rem'
             }}>1</span>
-            <span>Delivery Address</span>
+            <span className="text-sm md:text-base">Delivery Address</span>
           </div>
 
-          <div style={{ width: '40px', height: '2px', backgroundColor: step >= 2 ? 'var(--color-primary-terracotta)' : 'var(--color-border)' }} />
+          <div style={{ width: '36px', height: '2px', backgroundColor: step >= 2 ? 'var(--color-primary-terracotta)' : 'var(--color-border)' }} />
 
           <div style={{ 
             display: 'flex', 
@@ -441,10 +460,10 @@ export default function Checkout() {
               justifyContent: 'center',
               fontSize: '0.85rem'
             }}>2</span>
-            <span>Payment & Review</span>
+            <span className="text-sm md:text-base">Payment & Review</span>
           </div>
 
-          <div style={{ width: '40px', height: '2px', backgroundColor: step === 3 ? 'var(--color-primary-terracotta)' : 'var(--color-border)' }} />
+          <div style={{ width: '36px', height: '2px', backgroundColor: step === 3 ? 'var(--color-primary-terracotta)' : 'var(--color-border)' }} />
 
           <div style={{ 
             display: 'flex', 
@@ -464,46 +483,102 @@ export default function Checkout() {
               justifyContent: 'center',
               fontSize: '0.85rem'
             }}>3</span>
-            <span>Confirmation</span>
+            <span className="text-sm md:text-base">Confirmation</span>
+          </div>
+        </div>
+
+        {/* Step Indicator - Responsive 3-Column Mobile Stepper (< 640px) */}
+        <div className="sm:hidden w-full mb-6 box-border">
+          <div className="grid grid-cols-3 relative w-full items-start">
+            {/* Connector Line 1 to 2 */}
+            <div 
+              className="absolute top-3.5 left-[16.66%] right-[50%] h-[2px] z-0 -translate-y-1/2"
+              style={{ backgroundColor: step >= 2 ? 'var(--color-primary-terracotta)' : 'var(--color-border)' }}
+            />
+            {/* Connector Line 2 to 3 */}
+            <div 
+              className="absolute top-3.5 left-[50%] right-[16.66%] h-[2px] z-0 -translate-y-1/2"
+              style={{ backgroundColor: step === 3 ? 'var(--color-primary-terracotta)' : 'var(--color-border)' }}
+            />
+
+            {/* Step 1 */}
+            <div className="relative z-10 flex flex-col items-center text-center px-1">
+              <span 
+                className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold mb-1.5 transition-colors"
+                style={{
+                  backgroundColor: step >= 1 ? 'var(--color-primary-terracotta)' : 'var(--color-border)',
+                  color: 'var(--color-white)',
+                  boxShadow: step === 1 ? '0 0 0 3px rgba(166, 61, 64, 0.15)' : 'none'
+                }}
+              >
+                {step > 1 ? <Check size={14} className="stroke-[3]" /> : '1'}
+              </span>
+              <span 
+                className="text-[11px] leading-tight font-semibold"
+                style={{ color: step >= 1 ? 'var(--color-primary-terracotta)' : 'var(--color-text-secondary)' }}
+              >
+                Delivery<br />Address
+              </span>
+            </div>
+
+            {/* Step 2 */}
+            <div className="relative z-10 flex flex-col items-center text-center px-1">
+              <span 
+                className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold mb-1.5 transition-colors"
+                style={{
+                  backgroundColor: step >= 2 ? 'var(--color-primary-terracotta)' : 'var(--color-border)',
+                  color: 'var(--color-white)',
+                  boxShadow: step === 2 ? '0 0 0 3px rgba(166, 61, 64, 0.15)' : 'none'
+                }}
+              >
+                {step > 2 ? <Check size={14} className="stroke-[3]" /> : '2'}
+              </span>
+              <span 
+                className="text-[11px] leading-tight font-semibold"
+                style={{ color: step >= 2 ? 'var(--color-primary-terracotta)' : 'var(--color-text-secondary)' }}
+              >
+                Payment<br />&amp; Review
+              </span>
+            </div>
+
+            {/* Step 3 */}
+            <div className="relative z-10 flex flex-col items-center text-center px-1">
+              <span 
+                className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold mb-1.5 transition-colors"
+                style={{
+                  backgroundColor: step === 3 ? 'var(--color-primary-terracotta)' : 'var(--color-border)',
+                  color: 'var(--color-white)',
+                  boxShadow: step === 3 ? '0 0 0 3px rgba(166, 61, 64, 0.15)' : 'none'
+                }}
+              >
+                3
+              </span>
+              <span 
+                className="text-[11px] leading-tight font-semibold"
+                style={{ color: step === 3 ? 'var(--color-primary-terracotta)' : 'var(--color-text-secondary)' }}
+              >
+                Order<br />Confirmation
+              </span>
+            </div>
           </div>
         </div>
 
         {/* Global Notifications */}
         {orderError && (
-          <div style={{
-            maxWidth: '800px',
-            margin: '0 auto 24px',
-            padding: '14px 18px',
-            backgroundColor: '#FFEBEE',
-            border: '1px solid var(--color-error)',
-            borderRadius: 'var(--radius-sm)',
-            color: 'var(--color-error)',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '10px',
-            fontSize: '0.9rem'
-          }}>
-            <AlertCircle size={20} />
-            <span>{orderError}</span>
+          <div 
+            className="w-full max-w-[800px] mx-auto mb-5 p-3.5 sm:p-4 rounded-xl border border-[#B84242] bg-[#FFEBEE] text-[#B84242] flex items-start gap-2.5 text-xs sm:text-sm box-border"
+          >
+            <AlertCircle size={18} className="shrink-0 mt-0.5" />
+            <span className="min-w-0 flex-1 break-words">{orderError}</span>
           </div>
         )}
 
         {addressSuccessMsg && (
-          <div style={{
-            maxWidth: '800px',
-            margin: '0 auto 24px',
-            padding: '12px 18px',
-            backgroundColor: '#E8F5E9',
-            border: '1px solid var(--color-success)',
-            borderRadius: 'var(--radius-sm)',
-            color: 'var(--color-success)',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '10px',
-            fontSize: '0.9rem'
-          }}>
-            <CheckCircle2 size={18} />
-            <span>{addressSuccessMsg}</span>
+          <div 
+            className="w-full max-w-[800px] mx-auto mb-5 p-3 sm:p-3.5 rounded-xl border border-[#3F7D5A] bg-[#E8F5E9] text-[#3F7D5A] flex items-center gap-2.5 text-xs sm:text-sm box-border"
+          >
+            <CheckCircle2 size={18} className="shrink-0" />
+            <span className="min-w-0 flex-1 break-words">{addressSuccessMsg}</span>
           </div>
         )}
 
@@ -511,16 +586,13 @@ export default function Checkout() {
             STEP 1: Delivery Address Management
             ========================================================== */}
         {step === 1 && (
-          <div style={{ maxWidth: '800px', margin: '0 auto' }}>
-            <div style={{
-              backgroundColor: 'var(--color-white)',
-              borderRadius: 'var(--radius-lg)',
-              border: '1px solid var(--color-border)',
-              padding: '32px',
-              boxShadow: 'var(--shadow-sm)'
-            }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-                <h2 style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.5rem', margin: 0, color: 'var(--color-text-primary)' }}>
+          <div style={{ maxWidth: '800px', margin: '0 auto', width: '100%', minWidth: 0 }}>
+            <div 
+              className="bg-white rounded-2xl border border-[#E6D8CC] p-3.5 sm:p-6 md:p-8 shadow-xs w-full box-border min-w-0"
+            >
+              {/* Header with Heading & Add New Address Button */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-5 sm:mb-6">
+                <h2 className="font-serif text-xl sm:text-2xl font-bold tracking-tight text-[#2B2523] m-0">
                   Delivery Address
                 </h2>
                 {addresses.length > 0 && !showAddressForm && (
@@ -529,6 +601,7 @@ export default function Checkout() {
                     icon={Plus} 
                     size="sm"
                     onClick={handleOpenAddForm}
+                    className="self-start sm:self-auto shrink-0 text-xs sm:text-sm px-3 py-1.5"
                   >
                     Add New Address
                   </Button>
@@ -540,39 +613,24 @@ export default function Checkout() {
                   <LoadingSpinner text="Fetching your delivery addresses..." />
                 </div>
               ) : (
-                <div>
+                <div className="w-full min-w-0">
                   {/* Empty state: customer has no addresses */}
                   {addresses.length === 0 && !showAddressForm && (
-                    <div style={{
-                      textAlign: 'center',
-                      padding: '40px 24px',
-                      backgroundColor: 'var(--color-warm-cream)',
-                      borderRadius: 'var(--radius-md)',
-                      border: '1px dashed var(--color-border)',
-                      marginBottom: '24px'
-                    }}>
-                      <div style={{
-                        width: '56px',
-                        height: '56px',
-                        borderRadius: '50%',
-                        backgroundColor: 'var(--color-soft-beige)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        margin: '0 auto 16px'
-                      }}>
-                        <MapPin size={28} color="var(--color-primary-terracotta)" />
+                    <div className="text-center p-6 sm:p-10 bg-[#FFF9F3] rounded-xl border border-dashed border-[#E6D8CC] mb-6">
+                      <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-[#F4E8DC] flex items-center justify-center mx-auto mb-3.5">
+                        <MapPin size={24} color="var(--color-primary-terracotta)" />
                       </div>
-                      <h4 style={{ margin: '0 0 8px', color: 'var(--color-text-primary)', fontSize: '1.1rem' }}>
+                      <h4 className="m-0 mb-1.5 text-[#2B2523] text-base sm:text-lg font-bold">
                         No delivery address found
                       </h4>
-                      <p style={{ margin: '0 0 20px', color: 'var(--color-text-secondary)', fontSize: '0.9rem' }}>
+                      <p className="m-0 mb-4 text-[#6F625D] text-xs sm:text-sm max-w-sm mx-auto">
                         No delivery address found. Please add your delivery address to continue.
                       </p>
                       <Button 
                         variant="primary" 
                         icon={Plus} 
                         onClick={handleOpenAddForm}
+                        className="w-full sm:w-auto text-xs sm:text-sm"
                       >
                         Add New Delivery Address
                       </Button>
@@ -581,7 +639,7 @@ export default function Checkout() {
 
                   {/* Saved Addresses List */}
                   {addresses.length > 0 && !showAddressForm && (
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginBottom: '24px' }}>
+                    <div className="flex flex-col gap-3.5 sm:gap-4 mb-6">
                       {addresses.map((addr) => {
                         const isSelected = selectedAddressId === addr.id;
                         const addressText = formatAddressString(addr);
@@ -590,81 +648,69 @@ export default function Checkout() {
                           <div
                             key={addr.id}
                             onClick={() => setSelectedAddressId(addr.id)}
-                            style={{
-                              padding: '20px',
-                              borderRadius: 'var(--radius-md)',
-                              border: isSelected ? '2px solid var(--color-primary-terracotta)' : '1px solid var(--color-border)',
-                              backgroundColor: isSelected ? 'var(--color-warm-cream)' : 'var(--color-white)',
-                              cursor: 'pointer',
-                              transition: 'all 0.2s ease',
-                              position: 'relative'
-                            }}
+                            className={`p-3.5 sm:p-5 rounded-xl border transition-all cursor-pointer relative box-border w-full min-w-0 ${
+                              isSelected
+                                ? 'border-[#A63D40] bg-[#FFF9F3] ring-1 ring-[#A63D40]/30 shadow-xs'
+                                : 'border-[#E6D8CC] bg-white hover:border-[#C69A5B]/60'
+                            }`}
+                            style={{ boxSizing: 'border-box', width: '100%', maxWidth: '100%', minWidth: 0 }}
                           >
-                            <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '12px', marginBottom: '10px' }}>
-                              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                            {/* Address Card Top Row: Radio + Name on left, Actions on right */}
+                            <div 
+                              style={{
+                                display: 'flex',
+                                alignItems: 'flex-start',
+                                justifyContent: 'space-between',
+                                gap: '8px',
+                                marginBottom: '6px'
+                              }}
+                            >
+                              {/* Customer Information */}
+                              <div 
+                                style={{
+                                  display: 'flex',
+                                  alignItems: 'flex-start',
+                                  gap: '10px',
+                                  minWidth: 0,
+                                  flex: 1
+                                }}
+                              >
                                 <input
                                   type="radio"
                                   name="selectedAddress"
                                   checked={isSelected}
                                   onChange={() => setSelectedAddressId(addr.id)}
-                                  style={{ accentColor: 'var(--color-primary-terracotta)', width: '18px', height: '18px', cursor: 'pointer' }}
+                                  aria-label={`Select address for ${addr.full_name || addr.name || 'Customer'}`}
+                                  style={{
+                                    accentColor: 'var(--color-primary-terracotta)',
+                                    width: '18px',
+                                    height: '18px',
+                                    cursor: 'pointer',
+                                    flexShrink: 0,
+                                    marginTop: '2px'
+                                  }}
                                 />
-                                <span style={{ fontWeight: 700, fontSize: '1rem', color: 'var(--color-text-primary)' }}>
+                                <span 
+                                  className="font-bold text-sm sm:text-base text-[#2B2523] break-words"
+                                  style={{ minWidth: 0, wordBreak: 'break-word', lineHeight: 1.4 }}
+                                >
                                   {addr.full_name || addr.name || user?.name || 'Customer'}
                                 </span>
-                                <span style={{
-                                  fontSize: '0.75rem',
-                                  backgroundColor: 'var(--color-soft-beige)',
-                                  padding: '2px 8px',
-                                  borderRadius: 'var(--radius-full)',
-                                  color: 'var(--color-text-primary)',
-                                  textTransform: 'uppercase',
-                                  fontWeight: 600
-                                }}>
-                                  {addr.address_type || 'Home'}
-                                </span>
-                                {addr.is_default && (
-                                  <span style={{ 
-                                    fontSize: '0.75rem', 
-                                    backgroundColor: '#E8F5E9', 
-                                    padding: '2px 8px', 
-                                    borderRadius: 'var(--radius-full)',
-                                    color: 'var(--color-success)',
-                                    fontWeight: 600
-                                  }}>
-                                    Default
-                                  </span>
-                                )}
                               </div>
 
-                              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                {!addr.is_default && (
-                                  <button
-                                    type="button"
-                                    onClick={(e) => handleSetDefaultAddress(addr.id, e)}
-                                    style={{
-                                      background: 'none',
-                                      border: 'none',
-                                      color: 'var(--color-primary-terracotta)',
-                                      fontSize: '0.8rem',
-                                      fontWeight: 600,
-                                      cursor: 'pointer',
-                                      padding: '4px 8px'
-                                    }}
-                                  >
-                                    Set as Default
-                                  </button>
-                                )}
+                              {/* Dedicated Action Area: Edit and Delete */}
+                              <div 
+                                style={{
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  gap: '4px',
+                                  flexShrink: 0
+                                }}
+                              >
                                 <button
                                   type="button"
                                   onClick={(e) => handleOpenEditForm(addr, e)}
-                                  style={{
-                                    background: 'none',
-                                    border: 'none',
-                                    color: 'var(--color-text-secondary)',
-                                    cursor: 'pointer',
-                                    padding: '4px'
-                                  }}
+                                  className="p-1.5 sm:p-2 text-[#6F625D] hover:text-[#A63D40] hover:bg-[#F4E8DC] rounded-md transition-colors cursor-pointer"
                                   title="Edit address"
                                   aria-label="Edit address"
                                 >
@@ -673,13 +719,7 @@ export default function Checkout() {
                                 <button
                                   type="button"
                                   onClick={(e) => handleDeleteAddress(addr.id, e)}
-                                  style={{
-                                    background: 'none',
-                                    border: 'none',
-                                    color: 'var(--color-error)',
-                                    cursor: 'pointer',
-                                    padding: '4px'
-                                  }}
+                                  className="p-1.5 sm:p-2 text-[#B84242] hover:text-[#8F3034] hover:bg-[#FFEBEE] rounded-md transition-colors cursor-pointer"
                                   title="Delete address"
                                   aria-label="Delete address"
                                 >
@@ -688,12 +728,74 @@ export default function Checkout() {
                               </div>
                             </div>
 
-                            <p style={{ margin: '0 0 8px 28px', fontSize: '0.9rem', color: 'var(--color-text-primary)', lineHeight: 1.5 }}>
-                              {addressText}
-                            </p>
+                            {/* Details indented under radio button */}
+                            <div style={{ marginLeft: '28px', minWidth: 0 }}>
+                              {/* HOME / Default Badges & Set as Default Button */}
+                              <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '6px', marginBottom: '8px' }}>
+                                <span 
+                                  style={{
+                                    fontSize: '0.7rem',
+                                    backgroundColor: 'var(--color-soft-beige)',
+                                    padding: '2px 8px',
+                                    borderRadius: 'var(--radius-full)',
+                                    color: 'var(--color-text-primary)',
+                                    textTransform: 'uppercase',
+                                    fontWeight: 700,
+                                    letterSpacing: '0.5px'
+                                  }}
+                                >
+                                  {addr.address_type || 'Home'}
+                                </span>
+                                {addr.is_default ? (
+                                  <span 
+                                    style={{
+                                      fontSize: '0.7rem',
+                                      backgroundColor: '#E8F5E9',
+                                      padding: '2px 8px',
+                                      borderRadius: 'var(--radius-full)',
+                                      color: 'var(--color-success)',
+                                      fontWeight: 700
+                                    }}
+                                  >
+                                    Default
+                                  </span>
+                                ) : (
+                                  <button
+                                    type="button"
+                                    onClick={(e) => handleSetDefaultAddress(addr.id, e)}
+                                    style={{
+                                      background: 'none',
+                                      border: 'none',
+                                      color: 'var(--color-primary-terracotta)',
+                                      fontSize: '0.75rem',
+                                      fontWeight: 600,
+                                      cursor: 'pointer',
+                                      padding: '2px 4px',
+                                      textDecoration: 'underline'
+                                    }}
+                                  >
+                                    Set as Default
+                                  </button>
+                                )}
+                              </div>
 
-                            <div style={{ margin: '0 0 0 28px', fontSize: '0.85rem', color: 'var(--color-text-secondary)' }}>
-                              Mobile: <span style={{ fontWeight: 600, color: 'var(--color-text-primary)' }}>{addr.mobile_number || addr.phone || user?.phone || 'Not provided'}</span>
+                              {/* Address Text */}
+                              <p 
+                                style={{
+                                  margin: '0 0 8px 0',
+                                  fontSize: '0.85rem',
+                                  color: 'var(--color-text-primary)',
+                                  lineHeight: 1.5,
+                                  wordBreak: 'break-word'
+                                }}
+                              >
+                                {addressText}
+                              </p>
+
+                              {/* Mobile Number */}
+                              <div style={{ fontSize: '0.825rem', color: 'var(--color-text-secondary)', wordBreak: 'break-all' }}>
+                                Mobile: <span style={{ fontWeight: 600, color: 'var(--color-text-primary)' }}>{addr.mobile_number || addr.phone || user?.phone || 'Not provided'}</span>
+                              </div>
                             </div>
                           </div>
                         );
@@ -705,62 +807,44 @@ export default function Checkout() {
                   {showAddressForm && (
                     <form 
                       onSubmit={handleSaveAddress} 
-                      style={{
-                        backgroundColor: 'var(--color-warm-cream)',
-                        padding: '28px',
-                        borderRadius: 'var(--radius-md)',
-                        border: '1px solid var(--color-border)',
-                        marginBottom: '24px'
-                      }}
+                      className="bg-[#FFF9F3] p-3.5 sm:p-6 rounded-xl border border-[#E6D8CC] mb-6 w-full box-border min-w-0"
                     >
-                      <h4 style={{ margin: '0 0 20px 0', color: 'var(--color-text-primary)', fontFamily: 'Playfair Display, serif', fontSize: '1.25rem' }}>
+                      <h4 className="m-0 mb-4 sm:mb-5 text-[#2B2523] font-serif text-lg sm:text-xl font-bold">
                         {editingAddressId ? 'Edit Delivery Address' : 'Add New Delivery Address'}
                       </h4>
 
                       {addressErrors.submit && (
-                        <div style={{
-                          marginBottom: '16px',
-                          padding: '10px 14px',
-                          backgroundColor: '#FFEBEE',
-                          border: '1px solid var(--color-error)',
-                          borderRadius: 'var(--radius-sm)',
-                          color: 'var(--color-error)',
-                          fontSize: '0.85rem'
-                        }}>
+                        <div className="mb-4 p-2.5 sm:p-3 bg-[#FFEBEE] border border-[#B84242] rounded-lg text-[#B84242] text-xs sm:text-sm break-words">
                           {addressErrors.submit}
                         </div>
                       )}
 
-                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '16px', marginBottom: '16px' }}>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-3.5 sm:mb-4">
                         {/* Full Name */}
-                        <div>
-                          <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, marginBottom: '6px' }}>
-                            Full Name <span style={{ color: 'var(--color-error)' }}>*</span>
+                        <div className="min-w-0">
+                          <label className="block text-xs sm:text-sm font-semibold mb-1 text-[#2B2523]">
+                            Full Name <span className="text-[#B84242]">*</span>
                           </label>
                           <input
                             type="text"
                             value={addressForm.full_name}
                             onChange={(e) => setAddressForm({ ...addressForm, full_name: e.target.value })}
                             placeholder="Enter full name"
-                            style={{
-                              width: '100%',
-                              padding: '10px 14px',
-                              borderRadius: 'var(--radius-sm)',
-                              border: addressErrors.full_name ? '1px solid var(--color-error)' : '1px solid var(--color-border)',
-                              fontSize: '0.9rem'
-                            }}
+                            className={`w-full min-w-0 px-3 py-2 sm:py-2.5 rounded-lg border text-xs sm:text-sm bg-white box-border focus:outline-none focus:ring-1 focus:ring-[#A63D40] ${
+                              addressErrors.full_name ? 'border-[#B84242]' : 'border-[#E6D8CC]'
+                            }`}
                           />
                           {addressErrors.full_name && (
-                            <span style={{ fontSize: '0.75rem', color: 'var(--color-error)', marginTop: '4px', display: 'block' }}>
+                            <span className="text-[11px] text-[#B84242] mt-1 block">
                               {addressErrors.full_name}
                             </span>
                           )}
                         </div>
 
                         {/* Mobile Number */}
-                        <div>
-                          <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, marginBottom: '6px' }}>
-                            Mobile Number <span style={{ color: 'var(--color-error)' }}>*</span>
+                        <div className="min-w-0">
+                          <label className="block text-xs sm:text-sm font-semibold mb-1 text-[#2B2523]">
+                            Mobile Number <span className="text-[#B84242]">*</span>
                           </label>
                           <input
                             type="tel"
@@ -768,149 +852,123 @@ export default function Checkout() {
                             value={addressForm.mobile_number}
                             onChange={(e) => setAddressForm({ ...addressForm, mobile_number: e.target.value.replace(/\D/g, '') })}
                             placeholder="10-digit mobile number"
-                            style={{
-                              width: '100%',
-                              padding: '10px 14px',
-                              borderRadius: 'var(--radius-sm)',
-                              border: addressErrors.mobile_number ? '1px solid var(--color-error)' : '1px solid var(--color-border)',
-                              fontSize: '0.9rem'
-                            }}
+                            className={`w-full min-w-0 px-3 py-2 sm:py-2.5 rounded-lg border text-xs sm:text-sm bg-white box-border focus:outline-none focus:ring-1 focus:ring-[#A63D40] ${
+                              addressErrors.mobile_number ? 'border-[#B84242]' : 'border-[#E6D8CC]'
+                            }`}
                           />
                           {addressErrors.mobile_number && (
-                            <span style={{ fontSize: '0.75rem', color: 'var(--color-error)', marginTop: '4px', display: 'block' }}>
+                            <span className="text-[11px] text-[#B84242] mt-1 block">
                               {addressErrors.mobile_number}
                             </span>
                           )}
                         </div>
                       </div>
 
-                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '16px', marginBottom: '16px' }}>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-3.5 sm:mb-4">
                         {/* House / Flat / Building Number */}
-                        <div>
-                          <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, marginBottom: '6px' }}>
-                            House / Flat / Building Number <span style={{ color: 'var(--color-error)' }}>*</span>
+                        <div className="min-w-0">
+                          <label className="block text-xs sm:text-sm font-semibold mb-1 text-[#2B2523]">
+                            House / Flat / Building Number <span className="text-[#B84242]">*</span>
                           </label>
                           <input
                             type="text"
                             value={addressForm.house_number}
                             onChange={(e) => setAddressForm({ ...addressForm, house_number: e.target.value })}
                             placeholder="e.g. Flat 302, Green Heights"
-                            style={{
-                              width: '100%',
-                              padding: '10px 14px',
-                              borderRadius: 'var(--radius-sm)',
-                              border: addressErrors.house_number ? '1px solid var(--color-error)' : '1px solid var(--color-border)',
-                              fontSize: '0.9rem'
-                            }}
+                            className={`w-full min-w-0 px-3 py-2 sm:py-2.5 rounded-lg border text-xs sm:text-sm bg-white box-border focus:outline-none focus:ring-1 focus:ring-[#A63D40] ${
+                              addressErrors.house_number ? 'border-[#B84242]' : 'border-[#E6D8CC]'
+                            }`}
                           />
                           {addressErrors.house_number && (
-                            <span style={{ fontSize: '0.75rem', color: 'var(--color-error)', marginTop: '4px', display: 'block' }}>
+                            <span className="text-[11px] text-[#B84242] mt-1 block">
                               {addressErrors.house_number}
                             </span>
                           )}
                         </div>
 
                         {/* Street / Area / Locality */}
-                        <div>
-                          <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, marginBottom: '6px' }}>
-                            Street / Area / Locality <span style={{ color: 'var(--color-error)' }}>*</span>
+                        <div className="min-w-0">
+                          <label className="block text-xs sm:text-sm font-semibold mb-1 text-[#2B2523]">
+                            Street / Area / Locality <span className="text-[#B84242]">*</span>
                           </label>
                           <input
                             type="text"
                             value={addressForm.street}
                             onChange={(e) => setAddressForm({ ...addressForm, street: e.target.value })}
                             placeholder="e.g. MG Road, Civil Lines"
-                            style={{
-                              width: '100%',
-                              padding: '10px 14px',
-                              borderRadius: 'var(--radius-sm)',
-                              border: addressErrors.street ? '1px solid var(--color-error)' : '1px solid var(--color-border)',
-                              fontSize: '0.9rem'
-                            }}
+                            className={`w-full min-w-0 px-3 py-2 sm:py-2.5 rounded-lg border text-xs sm:text-sm bg-white box-border focus:outline-none focus:ring-1 focus:ring-[#A63D40] ${
+                              addressErrors.street ? 'border-[#B84242]' : 'border-[#E6D8CC]'
+                            }`}
                           />
                           {addressErrors.street && (
-                            <span style={{ fontSize: '0.75rem', color: 'var(--color-error)', marginTop: '4px', display: 'block' }}>
+                            <span className="text-[11px] text-[#B84242] mt-1 block">
                               {addressErrors.street}
                             </span>
                           )}
                         </div>
                       </div>
 
-                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', marginBottom: '16px' }}>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-4">
                         {/* Landmark (Optional) */}
-                        <div>
-                          <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, marginBottom: '6px' }}>
-                            Landmark <span style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)', fontWeight: 400 }}>(Optional)</span>
+                        <div className="min-w-0">
+                          <label className="block text-xs sm:text-sm font-semibold mb-1 text-[#2B2523]">
+                            Landmark <span className="text-[11px] text-[#6F625D] font-normal">(Optional)</span>
                           </label>
                           <input
                             type="text"
                             value={addressForm.landmark}
                             onChange={(e) => setAddressForm({ ...addressForm, landmark: e.target.value })}
-                            placeholder="e.g. Near City Post Office"
-                            style={{
-                              width: '100%',
-                              padding: '10px 14px',
-                              borderRadius: 'var(--radius-sm)',
-                              border: '1px solid var(--color-border)',
-                              fontSize: '0.9rem'
-                            }}
+                            placeholder="e.g. Near Post Office"
+                            className="w-full min-w-0 px-3 py-2 sm:py-2.5 rounded-lg border border-[#E6D8CC] text-xs sm:text-sm bg-white box-border focus:outline-none focus:ring-1 focus:ring-[#A63D40]"
                           />
                         </div>
 
                         {/* City */}
-                        <div>
-                          <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, marginBottom: '6px' }}>
-                            City <span style={{ color: 'var(--color-error)' }}>*</span>
+                        <div className="min-w-0">
+                          <label className="block text-xs sm:text-sm font-semibold mb-1 text-[#2B2523]">
+                            City <span className="text-[#B84242]">*</span>
                           </label>
                           <input
                             type="text"
                             value={addressForm.city}
                             onChange={(e) => setAddressForm({ ...addressForm, city: e.target.value })}
                             placeholder="e.g. Jaipur"
-                            style={{
-                              width: '100%',
-                              padding: '10px 14px',
-                              borderRadius: 'var(--radius-sm)',
-                              border: addressErrors.city ? '1px solid var(--color-error)' : '1px solid var(--color-border)',
-                              fontSize: '0.9rem'
-                            }}
+                            className={`w-full min-w-0 px-3 py-2 sm:py-2.5 rounded-lg border text-xs sm:text-sm bg-white box-border focus:outline-none focus:ring-1 focus:ring-[#A63D40] ${
+                              addressErrors.city ? 'border-[#B84242]' : 'border-[#E6D8CC]'
+                            }`}
                           />
                           {addressErrors.city && (
-                            <span style={{ fontSize: '0.75rem', color: 'var(--color-error)', marginTop: '4px', display: 'block' }}>
+                            <span className="text-[11px] text-[#B84242] mt-1 block">
                               {addressErrors.city}
                             </span>
                           )}
                         </div>
 
                         {/* State */}
-                        <div>
-                          <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, marginBottom: '6px' }}>
-                            State <span style={{ color: 'var(--color-error)' }}>*</span>
+                        <div className="min-w-0">
+                          <label className="block text-xs sm:text-sm font-semibold mb-1 text-[#2B2523]">
+                            State <span className="text-[#B84242]">*</span>
                           </label>
                           <input
                             type="text"
                             value={addressForm.state}
                             onChange={(e) => setAddressForm({ ...addressForm, state: e.target.value })}
                             placeholder="e.g. Rajasthan"
-                            style={{
-                              width: '100%',
-                              padding: '10px 14px',
-                              borderRadius: 'var(--radius-sm)',
-                              border: addressErrors.state ? '1px solid var(--color-error)' : '1px solid var(--color-border)',
-                              fontSize: '0.9rem'
-                            }}
+                            className={`w-full min-w-0 px-3 py-2 sm:py-2.5 rounded-lg border text-xs sm:text-sm bg-white box-border focus:outline-none focus:ring-1 focus:ring-[#A63D40] ${
+                              addressErrors.state ? 'border-[#B84242]' : 'border-[#E6D8CC]'
+                            }`}
                           />
                           {addressErrors.state && (
-                            <span style={{ fontSize: '0.75rem', color: 'var(--color-error)', marginTop: '4px', display: 'block' }}>
+                            <span className="text-[11px] text-[#B84242] mt-1 block">
                               {addressErrors.state}
                             </span>
                           )}
                         </div>
 
                         {/* PIN Code */}
-                        <div>
-                          <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, marginBottom: '6px' }}>
-                            PIN Code <span style={{ color: 'var(--color-error)' }}>*</span>
+                        <div className="min-w-0">
+                          <label className="block text-xs sm:text-sm font-semibold mb-1 text-[#2B2523]">
+                            PIN Code <span className="text-[#B84242]">*</span>
                           </label>
                           <input
                             type="text"
@@ -918,16 +976,12 @@ export default function Checkout() {
                             value={addressForm.pincode}
                             onChange={(e) => setAddressForm({ ...addressForm, pincode: e.target.value.replace(/\D/g, '') })}
                             placeholder="6-digit PIN"
-                            style={{
-                              width: '100%',
-                              padding: '10px 14px',
-                              borderRadius: 'var(--radius-sm)',
-                              border: addressErrors.pincode ? '1px solid var(--color-error)' : '1px solid var(--color-border)',
-                              fontSize: '0.9rem'
-                            }}
+                            className={`w-full min-w-0 px-3 py-2 sm:py-2.5 rounded-lg border text-xs sm:text-sm bg-white box-border focus:outline-none focus:ring-1 focus:ring-[#A63D40] ${
+                              addressErrors.pincode ? 'border-[#B84242]' : 'border-[#E6D8CC]'
+                            }`}
                           />
                           {addressErrors.pincode && (
-                            <span style={{ fontSize: '0.75rem', color: 'var(--color-error)', marginTop: '4px', display: 'block' }}>
+                            <span className="text-[11px] text-[#B84242] mt-1 block">
                               {addressErrors.pincode}
                             </span>
                           )}
@@ -935,27 +989,19 @@ export default function Checkout() {
                       </div>
 
                       {/* Address Type */}
-                      <div style={{ marginBottom: '20px' }}>
-                        <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, marginBottom: '8px' }}>
+                      <div className="mb-4">
+                        <label className="block text-xs sm:text-sm font-semibold mb-1.5 text-[#2B2523]">
                           Address Type
                         </label>
-                        <div style={{ display: 'flex', gap: '12px' }}>
+                        <div className="flex flex-wrap gap-2 sm:gap-2.5">
                           {['Home', 'Office', 'Other'].map((type) => (
                             <label
                               key={type}
-                              style={{
-                                padding: '8px 16px',
-                                borderRadius: 'var(--radius-full)',
-                                border: addressForm.address_type === type ? '2px solid var(--color-primary-terracotta)' : '1px solid var(--color-border)',
-                                backgroundColor: addressForm.address_type === type ? 'var(--color-soft-beige)' : 'var(--color-white)',
-                                color: 'var(--color-text-primary)',
-                                fontSize: '0.85rem',
-                                fontWeight: 600,
-                                cursor: 'pointer',
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: '6px'
-                              }}
+                              className={`px-3.5 py-1.5 rounded-full border text-xs font-semibold cursor-pointer flex items-center gap-1.5 transition-all ${
+                                addressForm.address_type === type
+                                  ? 'border-[#A63D40] bg-[#F4E8DC] text-[#2B2523]'
+                                  : 'border-[#E6D8CC] bg-white text-[#6F625D]'
+                              }`}
                             >
                               <input
                                 type="radio"
@@ -963,7 +1009,7 @@ export default function Checkout() {
                                 value={type}
                                 checked={addressForm.address_type === type}
                                 onChange={(e) => setAddressForm({ ...addressForm, address_type: e.target.value })}
-                                style={{ display: 'none' }}
+                                className="hidden"
                               />
                               {addressForm.address_type === type && <Check size={14} color="var(--color-primary-terracotta)" />}
                               <span>{type}</span>
@@ -973,48 +1019,55 @@ export default function Checkout() {
                       </div>
 
                       {/* Default Address Checkbox */}
-                      <div style={{ marginBottom: '24px' }}>
-                        <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '0.85rem' }}>
+                      <div className="mb-5">
+                        <label className="flex items-center gap-2 cursor-pointer text-xs sm:text-sm text-[#2B2523]">
                           <input
                             type="checkbox"
                             checked={addressForm.is_default || addresses.length === 0}
                             disabled={addresses.length === 0}
                             onChange={(e) => setAddressForm({ ...addressForm, is_default: e.target.checked })}
-                            style={{ accentColor: 'var(--color-primary-terracotta)', width: '16px', height: '16px' }}
+                            className="accent-[#A63D40] w-4 h-4"
                           />
                           <span>Make this my default delivery address</span>
                         </label>
                       </div>
 
                       {/* Form Actions */}
-                      <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-                        <Button 
-                          type="submit" 
-                          variant="primary" 
-                          loading={savingAddress}
-                        >
-                          Save Address
-                        </Button>
+                      <div className="flex flex-col-reverse sm:flex-row gap-2.5 sm:gap-3">
                         <Button 
                           type="button" 
                           variant="outline" 
                           onClick={handleCancelAddressForm}
+                          className="w-full sm:w-auto text-xs sm:text-sm py-2"
                         >
                           Cancel
+                        </Button>
+                        <Button 
+                          type="submit" 
+                          variant="primary" 
+                          loading={savingAddress}
+                          className="w-full sm:w-auto text-xs sm:text-sm py-2"
+                        >
+                          Save Address
                         </Button>
                       </div>
                     </form>
                   )}
 
                   {/* Navigation footer for step 1 */}
-                  <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px solid var(--color-border)', paddingTop: '20px' }}>
-                    <Button variant="ghost" onClick={() => navigate('/cart')}>
+                  <div className="flex flex-col-reverse sm:flex-row sm:items-center justify-between gap-3 pt-5 border-t border-[#E6D8CC] mt-6">
+                    <Button 
+                      variant="ghost" 
+                      onClick={() => navigate('/cart')}
+                      className="w-full sm:w-auto justify-center text-xs sm:text-sm py-2.5"
+                    >
                       ← Return to Cart
                     </Button>
                     <Button 
                       variant="primary" 
                       onClick={() => setStep(2)}
                       disabled={!selectedAddressId && addresses.length === 0}
+                      className="w-full sm:w-auto justify-center text-xs sm:text-sm py-2.5"
                     >
                       Continue to Payment →
                     </Button>
@@ -1029,101 +1082,67 @@ export default function Checkout() {
             STEP 2: Payment Mode & Order Review
             ========================================================== */}
         {step === 2 && (
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-            gap: '32px',
-            maxWidth: '1000px',
-            margin: '0 auto'
-          }}>
-            {/* Left: Payment Method Selection */}
-            <div style={{
-              backgroundColor: 'var(--color-white)',
-              borderRadius: 'var(--radius-lg)',
-              border: '1px solid var(--color-border)',
-              padding: '32px',
-              boxShadow: 'var(--shadow-sm)'
-            }}>
-              <h2 style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.5rem', marginBottom: '24px', color: 'var(--color-text-primary)' }}>
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 lg:gap-8 max-w-[1040px] mx-auto w-full min-w-0">
+            {/* Left Column: Payment Mode Selection & Delivery Address Preview */}
+            <div className="lg:col-span-7 bg-white rounded-2xl border border-[#E6D8CC] p-3.5 sm:p-6 md:p-8 shadow-xs w-full min-w-0 box-border">
+              <h2 className="font-serif text-xl sm:text-2xl font-bold mb-5 sm:mb-6 text-[#2B2523] m-0">
                 Select Payment Mode
               </h2>
 
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginBottom: '32px' }}>
+              <div className="flex flex-col gap-3 sm:gap-4 mb-6 sm:mb-8">
                 {/* Cash on Delivery */}
-                <label style={{
-                  padding: '16px',
-                  borderRadius: 'var(--radius-md)',
-                  border: paymentMethod === 'cod' ? '2px solid var(--color-primary-terracotta)' : '1px solid var(--color-border)',
-                  backgroundColor: paymentMethod === 'cod' ? 'var(--color-warm-cream)' : 'var(--color-white)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '14px',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s ease'
-                }}>
+                <label 
+                  className={`p-3.5 sm:p-4 rounded-xl border transition-all cursor-pointer flex items-center gap-3 sm:gap-4 box-border ${
+                    paymentMethod === 'cod'
+                      ? 'border-[#A63D40] bg-[#FFF9F3] ring-1 ring-[#A63D40]/30'
+                      : 'border-[#E6D8CC] bg-white hover:border-[#C69A5B]/60'
+                  }`}
+                >
                   <input
                     type="radio"
                     name="paymentMethod"
                     value="cod"
                     checked={paymentMethod === 'cod'}
                     onChange={() => setPaymentMethod('cod')}
-                    style={{ accentColor: 'var(--color-primary-terracotta)', width: '18px', height: '18px' }}
+                    className="accent-[#A63D40] w-4.5 h-4.5 shrink-0 cursor-pointer"
                   />
-                  <div style={{
-                    width: '40px',
-                    height: '40px',
-                    borderRadius: '50%',
-                    backgroundColor: 'var(--color-soft-beige)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    flexShrink: 0
-                  }}>
+                  <div className="w-10 h-10 rounded-full bg-[#F4E8DC] flex items-center justify-center shrink-0">
                     <Truck size={20} color="var(--color-primary-terracotta)" />
                   </div>
-                  <div>
-                    <div style={{ fontWeight: 700, color: 'var(--color-text-primary)' }}>Cash on Delivery (COD)</div>
-                    <div style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)', marginTop: '2px' }}>
+                  <div className="min-w-0 flex-1">
+                    <div className="font-bold text-sm sm:text-base text-[#2B2523] leading-snug">
+                      Cash on Delivery (COD)
+                    </div>
+                    <div className="text-xs text-[#6F625D] mt-0.5 leading-relaxed">
                       Pay with cash or UPI directly upon physical delivery at your doorstep
                     </div>
                   </div>
                 </label>
 
                 {/* Online Payment */}
-                <label style={{
-                  padding: '16px',
-                  borderRadius: 'var(--radius-md)',
-                  border: paymentMethod === 'online' ? '2px solid var(--color-primary-terracotta)' : '1px solid var(--color-border)',
-                  backgroundColor: paymentMethod === 'online' ? 'var(--color-warm-cream)' : 'var(--color-white)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '14px',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s ease'
-                }}>
+                <label 
+                  className={`p-3.5 sm:p-4 rounded-xl border transition-all cursor-pointer flex items-center gap-3 sm:gap-4 box-border ${
+                    paymentMethod === 'online'
+                      ? 'border-[#A63D40] bg-[#FFF9F3] ring-1 ring-[#A63D40]/30'
+                      : 'border-[#E6D8CC] bg-white hover:border-[#C69A5B]/60'
+                  }`}
+                >
                   <input
                     type="radio"
                     name="paymentMethod"
                     value="online"
                     checked={paymentMethod === 'online'}
                     onChange={() => setPaymentMethod('online')}
-                    style={{ accentColor: 'var(--color-primary-terracotta)', width: '18px', height: '18px' }}
+                    className="accent-[#A63D40] w-4.5 h-4.5 shrink-0 cursor-pointer"
                   />
-                  <div style={{
-                    width: '40px',
-                    height: '40px',
-                    borderRadius: '50%',
-                    backgroundColor: 'var(--color-soft-beige)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    flexShrink: 0
-                  }}>
+                  <div className="w-10 h-10 rounded-full bg-[#F4E8DC] flex items-center justify-center shrink-0">
                     <CreditCard size={20} color="var(--color-primary-terracotta)" />
                   </div>
-                  <div>
-                    <div style={{ fontWeight: 700, color: 'var(--color-text-primary)' }}>Online Payment (UPI, Cards, Netbanking)</div>
-                    <div style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)', marginTop: '2px' }}>
+                  <div className="min-w-0 flex-1">
+                    <div className="font-bold text-sm sm:text-base text-[#2B2523] leading-snug">
+                      Online Payment (UPI, Cards, Netbanking)
+                    </div>
+                    <div className="text-xs text-[#6F625D] mt-0.5 leading-relaxed">
                       Secure 256-bit encrypted checkout via payment gateway
                     </div>
                   </div>
@@ -1132,33 +1151,27 @@ export default function Checkout() {
 
               {/* Delivery Address Snapshot Preview */}
               {selectedAddressId && addresses.some(a => a.id === selectedAddressId) && (
-                <div style={{
-                  padding: '16px',
-                  backgroundColor: 'var(--color-warm-cream)',
-                  borderRadius: 'var(--radius-md)',
-                  border: '1px solid var(--color-border)',
-                  marginBottom: '28px'
-                }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
-                    <span style={{ fontSize: '0.8rem', fontWeight: 700, textTransform: 'uppercase', color: 'var(--color-primary-terracotta)', letterSpacing: '0.5px' }}>
+                <div className="p-3.5 sm:p-4 bg-[#FFF9F3] rounded-xl border border-[#E6D8CC] mb-6 sm:mb-8 box-border">
+                  <div className="flex items-center justify-between gap-2 mb-1.5">
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-[#A63D40]">
                       Delivering to:
                     </span>
                     <button
                       type="button"
                       onClick={() => setStep(1)}
-                      style={{ background: 'none', border: 'none', color: 'var(--color-primary-terracotta)', fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer' }}
+                      className="text-xs font-semibold text-[#A63D40] hover:underline cursor-pointer bg-transparent border-0 p-1"
                     >
-                      Change
+                      Change Address
                     </button>
                   </div>
                   {(() => {
                     const sel = addresses.find(a => a.id === selectedAddressId);
                     return (
                       <div>
-                        <div style={{ fontWeight: 600, fontSize: '0.9rem', color: 'var(--color-text-primary)' }}>
+                        <div className="font-semibold text-xs sm:text-sm text-[#2B2523] break-words">
                           {sel.full_name || sel.name || user?.name} • {sel.mobile_number || sel.phone || user?.phone}
                         </div>
-                        <div style={{ fontSize: '0.85rem', color: 'var(--color-text-secondary)', marginTop: '2px' }}>
+                        <div className="text-xs text-[#6F625D] mt-1 leading-relaxed break-words">
                           {formatAddressString(sel)}
                         </div>
                       </div>
@@ -1167,8 +1180,13 @@ export default function Checkout() {
                 </div>
               )}
 
-              <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px solid var(--color-border)', paddingTop: '20px' }}>
-                <Button variant="ghost" onClick={() => setStep(1)}>
+              {/* Navigation footer for step 2 */}
+              <div className="flex flex-col-reverse sm:flex-row sm:items-center justify-between gap-3 pt-5 border-t border-[#E6D8CC]">
+                <Button 
+                  variant="ghost" 
+                  onClick={() => setStep(1)}
+                  className="w-full sm:w-auto justify-center text-xs sm:text-sm py-2.5"
+                >
                   ← Edit Address
                 </Button>
                 <Button 
@@ -1177,37 +1195,31 @@ export default function Checkout() {
                   onClick={handlePlaceOrder}
                   loading={submittingOrder}
                   disabled={submittingOrder}
+                  className="w-full sm:w-auto justify-center text-sm sm:text-base py-3 font-semibold"
                 >
                   {submittingOrder ? 'Placing Order...' : 'Place Order'}
                 </Button>
               </div>
             </div>
 
-            {/* Right: Order Summary */}
-            <div style={{
-              backgroundColor: 'var(--color-white)',
-              borderRadius: 'var(--radius-lg)',
-              border: '1px solid var(--color-border)',
-              padding: '24px',
-              boxShadow: 'var(--shadow-sm)',
-              height: 'fit-content'
-            }}>
-              <h3 style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.25rem', marginBottom: '16px' }}>
+            {/* Right Column: Order Summary */}
+            <div className="lg:col-span-5 bg-white rounded-2xl border border-[#E6D8CC] p-3.5 sm:p-6 shadow-xs h-fit w-full min-w-0 box-border">
+              <h3 className="font-serif text-lg sm:text-xl font-bold mb-3.5 sm:mb-4 text-[#2B2523] m-0">
                 Order Summary ({cartItems.length} {cartItems.length === 1 ? 'item' : 'items'})
               </h3>
 
-              <div style={{ maxHeight: '280px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '20px' }}>
+              <div className="max-h-72 overflow-y-auto divide-y divide-[#E6D8CC]/50 mb-4 pr-1">
                 {cartItems.map((item) => {
                   const p = item.product || item;
                   return (
-                    <div key={p.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.9rem' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <span style={{ fontWeight: 600 }}>{item.quantity}x</span>
-                        <span style={{ color: 'var(--color-text-primary)', maxWidth: '180px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    <div key={p.id} className="py-2.5 flex items-start justify-between gap-3 text-xs sm:text-sm">
+                      <div className="flex items-start gap-2 min-w-0 flex-1">
+                        <span className="font-bold text-[#A63D40] shrink-0 mt-0.5">{item.quantity}×</span>
+                        <span className="text-[#2B2523] leading-snug break-words">
                           {p.name}
                         </span>
                       </div>
-                      <span style={{ fontWeight: 600, color: 'var(--color-primary-terracotta)' }}>
+                      <span className="font-bold text-[#A63D40] shrink-0 whitespace-nowrap mt-0.5">
                         ₹{(Number(p.price) * item.quantity).toLocaleString('en-IN')}
                       </span>
                     </div>
@@ -1215,22 +1227,22 @@ export default function Checkout() {
                 })}
               </div>
 
-              <div style={{ borderTop: '1px solid var(--color-border)', paddingTop: '16px', display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '0.9rem' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--color-text-secondary)' }}>
+              <div className="border-t border-[#E6D8CC] pt-3.5 flex flex-col gap-2 text-xs sm:text-sm">
+                <div className="flex justify-between items-center text-[#6F625D]">
                   <span>Crafts Subtotal</span>
-                  <span>₹{subtotal.toLocaleString('en-IN')}</span>
+                  <span className="font-medium text-[#2B2523]">₹{subtotal.toLocaleString('en-IN')}</span>
                 </div>
                 {discountAmount > 0 && (
-                  <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--color-success)' }}>
+                  <div className="flex justify-between items-center text-[#3F7D5A]">
                     <span>Coupon Discount</span>
-                    <span>-₹{Math.round(discountAmount).toLocaleString('en-IN')}</span>
+                    <span className="font-medium">-₹{Math.round(discountAmount).toLocaleString('en-IN')}</span>
                   </div>
                 )}
-                <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--color-text-secondary)' }}>
-                  <span>Packaging & Shipping</span>
-                  <span>{shipping === 0 ? 'FREE' : `₹${shipping}`}</span>
+                <div className="flex justify-between items-center text-[#6F625D]">
+                  <span>Packaging &amp; Shipping</span>
+                  <span className="font-medium text-[#2B2523]">{shipping === 0 ? 'FREE' : `₹${shipping}`}</span>
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 700, fontSize: '1.15rem', color: 'var(--color-primary-terracotta)', borderTop: '1px solid var(--color-border)', paddingTop: '12px' }}>
+                <div className="flex justify-between items-center font-bold text-base sm:text-lg text-[#A63D40] border-t border-[#E6D8CC] pt-3 mt-1">
                   <span>Total Payable</span>
                   <span>₹{Math.round(totalAmount).toLocaleString('en-IN')}</span>
                 </div>
@@ -1243,49 +1255,44 @@ export default function Checkout() {
             STEP 3: Order Confirmation
             ========================================================== */}
         {step === 3 && confirmedOrder && (
-          <div style={{ maxWidth: '640px', margin: '0 auto', textAlign: 'center' }}>
-            <div style={{
-              backgroundColor: 'var(--color-white)',
-              borderRadius: 'var(--radius-lg)',
-              border: '1px solid var(--color-border)',
-              padding: '48px 32px',
-              boxShadow: 'var(--shadow-sm)'
-            }}>
-              <CheckCircle2 size={64} color="var(--color-success)" style={{ margin: '0 auto 16px' }} />
-              <h1 style={{ fontFamily: 'Playfair Display, serif', fontSize: '2rem', color: 'var(--color-text-primary)', marginBottom: '8px' }}>
+          <div className="max-w-[640px] mx-auto text-center w-full min-w-0 box-border">
+            <div className="bg-white rounded-2xl border border-[#E6D8CC] p-5 sm:p-8 md:p-12 shadow-xs box-border">
+              <CheckCircle2 size={56} color="var(--color-success)" className="mx-auto mb-3.5 sm:mb-4" />
+              <h1 className="font-serif text-2xl sm:text-3xl font-bold text-[#2B2523] mb-2 m-0">
                 Order Confirmed!
               </h1>
-              <p style={{ color: 'var(--color-text-secondary)', marginBottom: '24px', fontSize: '1rem', lineHeight: 1.6 }}>
+              <p className="text-[#6F625D] mb-5 sm:mb-6 text-xs sm:text-sm leading-relaxed max-w-md mx-auto">
                 Dhanyavaad! Your patronage directly supports Indian traditional artisans. We are hand-packing your order with care.
               </p>
 
-              <div style={{
-                backgroundColor: 'var(--color-warm-cream)',
-                borderRadius: 'var(--radius-md)',
-                padding: '20px',
-                textAlign: 'left',
-                marginBottom: '32px',
-                border: '1px solid var(--color-border)'
-              }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                  <span style={{ fontSize: '0.85rem', color: 'var(--color-text-secondary)' }}>Order Reference:</span>
-                  <span style={{ fontWeight: 700, color: 'var(--color-primary-terracotta)' }}>#{confirmedOrder.id || confirmedOrder.order_id}</span>
+              <div className="bg-[#FFF9F3] rounded-xl p-3.5 sm:p-5 text-left mb-6 sm:mb-8 border border-[#E6D8CC] text-xs sm:text-sm">
+                <div className="flex justify-between items-center mb-2">
+                  <span className="text-[#6F625D]">Order Reference:</span>
+                  <span className="font-bold text-[#A63D40]">#{confirmedOrder.id || confirmedOrder.order_id}</span>
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                  <span style={{ fontSize: '0.85rem', color: 'var(--color-text-secondary)' }}>Payment Method:</span>
-                  <span style={{ fontWeight: 600 }}>{confirmedOrder.payment_method?.toUpperCase() || paymentMethod.toUpperCase()}</span>
+                <div className="flex justify-between items-center mb-2">
+                  <span className="text-[#6F625D]">Payment Method:</span>
+                  <span className="font-semibold text-[#2B2523]">{confirmedOrder.payment_method?.toUpperCase() || paymentMethod.toUpperCase()}</span>
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <span style={{ fontSize: '0.85rem', color: 'var(--color-text-secondary)' }}>Total Amount:</span>
-                  <span style={{ fontWeight: 700 }}>₹{Number(confirmedOrder.total_amount || totalAmount).toLocaleString('en-IN')}</span>
+                <div className="flex justify-between items-center">
+                  <span className="text-[#6F625D]">Total Amount:</span>
+                  <span className="font-bold text-[#2B2523]">₹{Number(confirmedOrder.total_amount || totalAmount).toLocaleString('en-IN')}</span>
                 </div>
               </div>
 
-              <div style={{ display: 'flex', gap: '16px', justifyContent: 'center' }}>
-                <Button variant="primary" onClick={() => navigate('/account/orders')}>
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
+                <Button 
+                  variant="primary" 
+                  onClick={() => navigate('/account/orders')}
+                  className="w-full sm:w-auto text-xs sm:text-sm py-2.5"
+                >
                   Track in My Orders
                 </Button>
-                <Button variant="outline" onClick={() => navigate('/products')}>
+                <Button 
+                  variant="outline" 
+                  onClick={() => navigate('/products')}
+                  className="w-full sm:w-auto text-xs sm:text-sm py-2.5"
+                >
                   Continue Shopping
                 </Button>
               </div>
