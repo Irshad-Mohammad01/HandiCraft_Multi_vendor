@@ -119,9 +119,10 @@ app.before_request(check_maintenance_mode)
 try:
     db.init_app(app)
 except Exception as db_init_err:
+    from backend.config import mask_db_url
     print(f"\n{'='*75}")
     print(f" [DATABASE INIT ERROR] Failed to initialize database: {db_init_err}")
-    print(f" [DATABASE URI]: {app.config.get('SQLALCHEMY_DATABASE_URI')}")
+    print(f" [DATABASE URI]: {mask_db_url(app.config.get('SQLALCHEMY_DATABASE_URI'))}")
     print(f" [ENGINE OPTIONS]: {app.config.get('SQLALCHEMY_ENGINE_OPTIONS')}")
     print(f"{'='*75}\n")
     raise

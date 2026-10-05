@@ -9,7 +9,7 @@ Supports three fully separated environments:
 
 import os
 import sys
-from urllib.parse import urlparse
+from urllib.parse import urlparse, urlunparse
 from dotenv import load_dotenv
 
 # 1. Environment Detection & Loading
@@ -113,9 +113,6 @@ FRONTEND_URL = _normalize_origin(
 # 3. Dynamic Database URI Resolution (DEV, QA, PROD)
 sqlite_dev_path = os.path.join(_backend_dir, 'dev.db').replace('\\', '/')
 
-DEFAULT_NEON_OWNER_URL = "postgresql+psycopg2://neondb_owner:npg_59vRFHGrYwbD@ep-square-sky-b389pjbv-pooler.c-4.ap-southeast-1.aws.neon.tech/neondb?sslmode=require"
-DEFAULT_NEON_SELLER2_URL = "postgresql+psycopg2://neondb_owner:npg_aSEt9ZPjp0AW@ep-morning-field-b3of4l13-pooler.c-4.ap-southeast-1.aws.neon.tech/neondb?sslmode=require"
-
 def _clean_db_uri(uri):
     if not uri:
         return None
@@ -128,60 +125,85 @@ def _clean_db_uri(uri):
         val = "postgresql+psycopg2://" + val[13:]
     return val if val else None
 
-if ENVIRONMENT == "DEV":
-    raw_uri = _clean_db_uri(
-        os.environ.get("OWNER_DATABASE_URL")
-        or os.environ.get("DEV_DATABASE_URL")
-        or os.environ.get("DATABASE_URI")
-        or os.environ.get("DATABASE_URL")
-        or DEFAULT_NEON_OWNER_URL
-        or f"sqlite:///{sqlite_dev_path}"
-    )
-elif ENVIRONMENT == "QA":
-    raw_uri = _clean_db_uri(
-        os.environ.get("OWNER_DATABASE_URL")
-        or os.environ.get("QA_DATABASE_URL")
-        or os.environ.get("DATABASE_URI")
-        or os.environ.get("DATABASE_URL")
-        or DEFAULT_NEON_OWNER_URL
-        or f"sqlite:///{sqlite_dev_path}"
-    )
+def mask_db_url(url):
+    """Mask database passwords in connection URLs for safe logging without leaking secrets."""
+    if not url:
+        return "None"
+    try:
+        parsed = urlparse(str(url))
+        if parsed.password:
+            netloc = parsed.netloc.replace(f":{parsed.password}@", ":*****@")
+            return urlunparse(parsed._replace(netloc=netloc))
+        return str(url)
+    except Exception:
+        return "Configured"
+
+# Resolve Owner Database URL from environment variables
+_owner_db_candidates = (
+    os.environ.get("NEON_OWNER_DATABASE_URL")
+    or os.environ.get("OWNER_DATABASE_URL")
+    or (os.environ.get("DEV_DATABASE_URL") if ENVIRONMENT == "DEV" else None)
+    or (os.environ.get("QA_DATABASE_URL") if ENVIRONMENT == "QA" else None)
+    or (os.environ.get("PROD_DATABASE_URL") if ENVIRONMENT == "PROD" else None)
+    or os.environ.get("DATABASE_URL")
+    or os.environ.get("DATABASE_URI")
+)
+
+if _owner_db_candidates:
+    raw_uri = _clean_db_uri(_owner_db_candidates)
+elif ENVIRONMENT in ("DEV", "QA"):
+    raw_uri = f"sqlite:///{sqlite_dev_path}"
 else:
-    raw_uri = _clean_db_uri(
-        os.environ.get("OWNER_DATABASE_URL")
-        or os.environ.get("PROD_DATABASE_URL")
-        or os.environ.get("DATABASE_URI")
-        or os.environ.get("DATABASE_URL")
-        or DEFAULT_NEON_OWNER_URL
-    )
+    raw_uri = None
 
 OWNER_DATABASE_URL = raw_uri
 
 
 # 4. Multi-Database Dynamic Resolution for Sellers (DB2, DB3, DB4...)
 def get_seller_database_url_from_env(database_id):
+    """
+    Dynamically resolve the connection URL for any seller database identifier (e.g. 'DB2', 'DB3', '2', '3').
+    Reads strictly from environment variables without hardcoded credentials.
+    """
     if not database_id:
         return None
     db_str = str(database_id).strip().upper()
     candidates = []
+
+    # Extract numeric identifier if present
+    num = None
     if db_str.startswith("DB") and db_str[2:].isdigit():
         num = db_str[2:]
-        candidates.append(f"SELLER_DATABASE_URL_{num}")
-        candidates.append(f"DB_{num}_DATABASE_URL")
-        candidates.append(f"DATABASE_URL_DB{num}")
+    elif db_str.isdigit():
+        num = db_str
+    elif "SELLER" in db_str:
+        digits = "".join([c for c in db_str if c.isdigit()])
+        if digits:
+            num = digits
+
+    if num:
+        candidates.extend([
+            f"NEON_SELLER_{num}_DATABASE_URL",
+            f"NEON_SELLER{num}_DATABASE_URL",
+            f"SELLER_DATABASE_URL_{num}",
+            f"SELLER_{num}_DATABASE_URL",
+            f"DB_{num}_DATABASE_URL",
+            f"DB{num}_DATABASE_URL",
+            f"DATABASE_URL_DB{num}",
+        ])
+
+    # Direct match (e.g. if the full env key name was passed)
     candidates.append(db_str)
-    
+
     for candidate in candidates:
         val = os.environ.get(candidate)
         if val and str(val).strip():
             clean_val = _clean_db_uri(val)
-            if OWNER_DATABASE_URL and clean_val == OWNER_DATABASE_URL:
+            if clean_val and OWNER_DATABASE_URL and clean_val == OWNER_DATABASE_URL:
+                # Disallow reusing DB1 credentials for an isolated seller database
                 return None
-            return clean_val
-
-    # Default fallback for Seller DB2 if not set in environment
-    if db_str in ("DB2", "SELLER_DATABASE_URL_2"):
-        return DEFAULT_NEON_SELLER2_URL
+            if clean_val:
+                return clean_val
 
     return None
 
@@ -328,17 +350,7 @@ def validate_smtp_configuration():
 
 
 def validate_environment():
-    masked_db = "None"
-    if Config.SQLALCHEMY_DATABASE_URI:
-        try:
-            parsed = urlparse(Config.SQLALCHEMY_DATABASE_URI)
-            if parsed.password:
-                masked_netloc = parsed.netloc.replace(f":{parsed.password}@", ":*****@")
-                masked_db = f"{parsed.scheme}://{masked_netloc}{parsed.path}"
-            else:
-                masked_db = Config.SQLALCHEMY_DATABASE_URI
-        except Exception:
-            masked_db = "Configured"
+    masked_db = mask_db_url(Config.SQLALCHEMY_DATABASE_URI)
 
     print("\n" + "="*75)
     print(f" [CRAFTNEST ENVIRONMENT] Active Environment: {ENVIRONMENT}")
@@ -367,7 +379,7 @@ def validate_environment():
 
     env_db = Config.SQLALCHEMY_DATABASE_URI
     if not env_db:
-        missing.append("PROD_DATABASE_URL / DATABASE_URL")
+        missing.append("NEON_OWNER_DATABASE_URL / OWNER_DATABASE_URL / DATABASE_URL / PROD_DATABASE_URL")
     else:
         parsed_db = urlparse(env_db)
         if parsed_db.scheme not in ("postgresql", "postgresql+psycopg2"):

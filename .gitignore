@@ -35,12 +35,13 @@ dist/
 # Environment Variables & Secrets (NEVER COMMIT SECRETS)
 backend/.env
 backend/.env.*
-!backend/.env.example
 frontend/.env
 frontend/.env.local
 frontend/.env.*.local
 .env
 .env.*
+!backend/.env.example
+!.env.example
 
 # Local Databases
 backend/*.db

@@ -31,7 +31,7 @@ if parent_dir not in sys.path:
     sys.path.insert(0, parent_dir)
 
 from backend.app import app
-from backend.config import Config, OWNER_DATABASE_URL, get_seller_database_url_from_env
+from backend.config import Config, OWNER_DATABASE_URL, get_seller_database_url_from_env, mask_db_url
 from backend.services.multi_db_manager import (
     MultiDatabaseManager, 
     multi_db, 
@@ -73,7 +73,7 @@ class MultiDatabaseArchitectureTests(unittest.TestCase):
         self.assertIn("SELLER_DATABASE_URL_2", env_content, "SELLER_DATABASE_URL_2 placeholder must exist in .env")
         # In current state, SELLER_DATABASE_URL_2 is empty (as user will provide credentials later)
         db2_url = get_seller_database_url_from_env("DB2")
-        print(f"✓ Test 2 Passed: DB2 environment placeholder exists (active value: {db2_url or '[Awaiting User Credentials]'}).")
+        print(f"✓ Test 2 Passed: DB2 environment placeholder exists (active value: {mask_db_url(db2_url) if db2_url else '[Awaiting User Credentials]'}).")
 
     def test_03_db2_does_not_use_db1_credentials(self):
         """3. DB2 does not use DB1 credentials and explicitly forbids reusing DB1 URL."""
