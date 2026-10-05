@@ -197,10 +197,25 @@ export const Footer = () => {
       </div>
 
       {/* Bottom Sub-footer */}
-      <div className="border-t border-[#E6D8CC] bg-[#FFF9F3] py-6 text-center text-xs text-[#6F625D]">
-        <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p>© {new Date().getFullYear()} CRAFTNEST E-Commerce Platform. All rights reserved.</p>
-          <p className="text-[#C69A5B] font-serif italic">Dedicated to the timeless heritage of Indian handicraft artisans.</p>
+      <div className="border-t border-[#E6D8CC] bg-[#FFF9F3] py-6 text-xs text-[#6F625D]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-3 items-center gap-3 lg:gap-4">
+          <p className="text-center lg:text-left">
+            © {new Date().getFullYear()} CRAFTNEST E-Commerce Platform. All rights reserved.
+          </p>
+          <p className="text-center">
+            Powered by:{' '}
+            <a
+              href="https://hexmap.in/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-medium text-[#8F3034] hover:text-[#A63D40] underline underline-offset-4 decoration-[#D8C7B8] hover:decoration-[#A63D40] transition-colors"
+            >
+              HexMap Private Limited
+            </a>
+          </p>
+          <p className="text-[#C69A5B] font-serif italic text-center lg:text-right">
+            Dedicated to the timeless heritage of Indian handicraft artisans.
+          </p>
         </div>
       </div>
     </footer>
